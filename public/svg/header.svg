@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" version="1.1" width="80" height="60" viewBox="160 0 60 100">
+<defs>
+<clipPath id="clip_0">
+<path transform="matrix(1,0,0,-1,0,164.991)" d="M0 164.991H386.045V0H0Z"/>
+</clipPath>
+<clipPath id="clip_1">
+<path transform="matrix(1,0,0,-1,0,164.991)" d="M0 164.991H386.045V0H0Z"/>
+</clipPath>
+</defs>
+<g inkscape:groupmode="layer" inkscape:label="Livello 1">
+<g inkscape:groupmode="layer" inkscape:label="Livello 2">
+<path transform="matrix(1,0,0,-1,136.3153,62.941995)" d="M0 0 38.112 56.942 75.329 56.941 113.442-.001 89.902-32.742 23.538-32.741Z" fill="#152b50"/>
+<g clip-path="url(#clip_0)">
+<path transform="matrix(1,0,0,-1,136.3153,62.941995)" stroke-width="12" stroke-linecap="butt" stroke-miterlimit="10" stroke-linejoin="miter" fill="none" stroke="#152b50" d="M0 0 38.112 56.942 75.329 56.941 113.442-.001 89.902-32.742 23.538-32.741 0 0Z"/>
+</g>
+<path transform="matrix(1,0,0,-1,208.4064,6.0010988)" d="M0 0-18.861-26.252-6.779-43.063 13.338-15.083 3.238 0ZM-17.894-68.719-6.508-84.581 27.861-36.793 16.879-20.371ZM-2.83-89.683H17.811L41.351-56.942 31.402-42.079Z" fill="#a91d36"/>
+<path transform="matrix(1,0,0,-1,174.4278,6.0005037)" d="M0 0-15.556-23.251H9.931L26.658 0ZM-19.556-29.233-38.112-56.942-14.574-89.683H23.811L-5.761-48.553H1.577L12.406-63.62 23.54-48.163 9.931-29.233Z" fill="#4fa1d9"/>
+</g>
+</g>
+</svg>
