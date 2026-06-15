@@ -1,6 +1,7 @@
 import ImageTrail, {
     ImageTrailItem,
 } from "@/components/fancy/image/image-trail"
+import Image from "next/image"
 
 const images = [
     "https://scontent-mxp1-1.xx.fbcdn.net/v/t39.30808-6/503501873_122169871664370701_5167135847518893970_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=f727a1&_nc_ohc=_eaUzmTV2kwQ7kNvwEQqfZF&_nc_oc=AdkLlj7QBzpd1VvgfntktgEV_dG2jFGZ87QqGh9X_J36he0ohk3LMiVcaIemvTGPJAmG7WxgTHS-g_oRHTiCqBJj&_nc_zt=23&_nc_ht=scontent-mxp1-1.xx&_nc_gid=MS_p1BLtjX0WKOQ0FIVfKQ&oh=00_AfaWDT9dwtSc5iRfMoIdknX7paalGmGLVt2YbtjLduNcZg&oe=68E4A556",
@@ -24,7 +25,7 @@ const ImageTrailDemo = () => {
                 {images.map((url, index) => (
                     <ImageTrailItem key={index}>
                         <div className="w-48 sm:w-28 h-full relative overflow-hidden">
-                            <img src={url} alt="image" className="object-cover"/>
+                            <Image src={url} alt="image" fill sizes="12rem" className="object-cover"/>
                         </div>
                     </ImageTrailItem>
                 ))}

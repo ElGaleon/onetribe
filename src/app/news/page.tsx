@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "motion/react"
 import Link from "next/link"
+import Image from "next/image"
 import { 
   Calendar, 
   User, 
@@ -156,10 +157,12 @@ export default function News() {
               <div>
                 {/* Image block */}
                 <div className="relative h-48 overflow-hidden bg-brand-navy p-1">
-                  <img
+                  <Image
                     src={art.image}
                     alt={art.title}
-                    className="w-full h-full object-cover rounded-t-lg group-hover:scale-105 duration-300"
+                    fill
+                    sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+                    className="object-cover rounded-t-lg group-hover:scale-105 duration-300"
                   />
                   <div className="absolute top-3 left-3 px-2 py-1 rounded bg-brand-red/90 text-[9px] font-bold uppercase tracking-wider font-montserrat text-white shadow-md">
                     {art.category}

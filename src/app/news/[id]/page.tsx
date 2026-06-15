@@ -3,14 +3,12 @@
 import React, { useState, useEffect } from "react"
 import { useParams } from "next/navigation"
 import Link from "next/link"
+import Image from "next/image"
 import { 
   Calendar, 
   User, 
   ArrowLeft, 
   Share2, 
-  Facebook, 
-  Twitter, 
-  MessageCircle, 
   Link as LinkIcon, 
   Check, 
   Tag as TagIcon,
@@ -20,6 +18,7 @@ import {
 
 import { Navbar01 } from "@/components/ui/shadcn-io/navbar-01"
 import OneTribeLogo from "@/app/svg/one-tribe-logo"
+import { FacebookIcon, WhatsappIcon, XIcon } from "@/components/ui/social-icons"
 import { defaultArticles, type Article } from "../articles-data"
 
 export default function BlogPostDetail() {
@@ -152,10 +151,12 @@ export default function BlogPostDetail() {
         
         {/* Cover Photo */}
         <div className="relative h-64 md:h-120 w-full overflow-hidden rounded-2xl border border-white/5 bg-[#1E2543] p-1.5 shadow-2xl">
-          <img
+          <Image
             src={article.image}
             alt={article.title}
-            className="w-full h-full object-cover rounded-xl"
+            fill
+            sizes="(min-width: 768px) 56rem, 100vw"
+            className="object-cover rounded-xl"
           />
           <div className="absolute top-6 left-6 px-3 py-1.5 rounded bg-brand-red/90 text-xs font-bold uppercase tracking-wider font-montserrat text-white shadow-lg">
             {article.category}
@@ -231,7 +232,7 @@ export default function BlogPostDetail() {
               title="Condividi su Facebook"
               className="w-10 h-10 rounded-lg bg-brand-navy border border-white/5 flex items-center justify-center text-muted-foreground hover:text-white hover:border-brand-blue hover:bg-brand-navy/80 transition-expo duration-200 cursor-pointer"
             >
-              <Facebook className="w-4 h-4" />
+              <FacebookIcon className="w-4 h-4" />
             </a>
 
             {/* X (formerly Twitter) Share */}
@@ -242,7 +243,7 @@ export default function BlogPostDetail() {
               title="Condividi su X"
               className="w-10 h-10 rounded-lg bg-brand-navy border border-white/5 flex items-center justify-center text-muted-foreground hover:text-white hover:border-brand-blue hover:bg-brand-navy/80 transition-expo duration-200 cursor-pointer"
             >
-              <Twitter className="w-4 h-4" />
+              <XIcon className="w-4 h-4" />
             </a>
 
             {/* WhatsApp Share */}
@@ -253,7 +254,7 @@ export default function BlogPostDetail() {
               title="Condividi su WhatsApp"
               className="w-10 h-10 rounded-lg bg-brand-navy border border-white/5 flex items-center justify-center text-muted-foreground hover:text-white hover:border-brand-blue hover:bg-brand-navy/80 transition-expo duration-200 cursor-pointer"
             >
-              <MessageCircle className="w-4 h-4" />
+              <WhatsappIcon className="w-4 h-4" />
             </a>
 
             {/* Copy link button */}

@@ -3,6 +3,7 @@
 import React, { useRef, useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
+import Image from "next/image"
 import { motion } from "motion/react"
 import { 
   ArrowRight, 
@@ -13,8 +14,7 @@ import {
   MapPin, 
   Heart, 
   FileText, 
-  Activity,
-  Instagram
+  Activity
 } from "lucide-react"
 
 import { Navbar01 } from "@/components/ui/shadcn-io/navbar-01"
@@ -22,6 +22,7 @@ import OneTribeLogo from "@/app/svg/one-tribe-logo"
 import OneTribeText from "@/app/svg/one-tribe-text"
 import Floating, { FloatingElement } from "@/components/fancy/image/parallax-floating"
 import ImageTrail, { ImageTrailItem } from "@/components/fancy/image/image-trail"
+import { InstagramIcon } from "@/components/ui/social-icons"
 import { exampleImages } from "@/utils/demo-images"
 import { defaultArticles, type Article } from "./news/articles-data"
 
@@ -125,7 +126,7 @@ const ParallaxVideoCard = ({ reel, position, containerRef }: ParallaxVideoCardPr
             <div className="absolute inset-0 bg-brand-navy/10 pointer-events-none" />
             {/* Hover overlay with Instagram logo */}
             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center gap-1 text-white pointer-events-none">
-              <Instagram className="w-5 h-5 text-brand-red fill-brand-red" />
+              <InstagramIcon className="w-5 h-5 text-brand-red" />
               <span className="font-montserrat text-[9px] font-bold uppercase tracking-wider">Doppio click</span>
             </div>
           </div>
@@ -480,11 +481,13 @@ export default function Home() {
                   className="group flex flex-col gap-4"
                 >
                   {/* Portrait Image */}
-                  <div className="aspect-[3/4] w-full overflow-hidden bg-brand-navy rounded-none border border-white/5 group-hover:border-brand-blue/30 transition-all duration-300">
-                    <img
+                  <div className="relative aspect-[3/4] w-full overflow-hidden bg-brand-navy rounded-none border border-white/5 group-hover:border-brand-blue/30 transition-all duration-300">
+                    <Image
                       src={article.image}
                       alt={article.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                      fill
+                      sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
+                      className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
                     />
                   </div>
                   {/* Article Info */}
@@ -508,10 +511,12 @@ export default function Home() {
               >
                 {/* Full bleed background image */}
                 <div className="absolute inset-0 w-full h-full">
-                  <img
+                  <Image
                     src="/images/onetribe-5.jpg"
                     alt="Promo Kit"
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                    fill
+                    sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
+                    className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-brand-navy via-brand-navy/60 to-brand-navy/30 opacity-95" />
                 </div>
@@ -680,11 +685,13 @@ export default function Home() {
           className="absolute inset-0 cursor-crosshair z-10"
         >
           {exampleImages.map((img, idx) => (
-            <ImageTrailItem key={idx} className="w-52 h-36 md:w-60 md:h-44 rounded-lg overflow-hidden border-2 border-brand-blue/30 shadow-2xl p-1 bg-brand-navy">
-              <img
+            <ImageTrailItem key={idx} className="relative w-52 h-36 md:w-60 md:h-44 rounded-lg overflow-hidden border-2 border-brand-blue/30 shadow-2xl p-1 bg-brand-navy">
+              <Image
                 src={img.url}
                 alt="One Tribe Action"
-                className="w-full h-full object-cover rounded"
+                fill
+                sizes="(min-width: 768px) 15rem, 13rem"
+                className="object-cover rounded"
                 draggable={false}
               />
             </ImageTrailItem>
@@ -899,9 +906,12 @@ export default function Home() {
                 whileHover={{ scale: 1.05 }}
                 className="group relative flex items-center justify-center p-6 bg-[#1E2543] border border-white/5 hover:border-brand-blue/30 rounded-lg w-full h-32 overflow-hidden duration-300"
               >
-                <img
+                <Image
                   src={sponsor.url}
                   alt={sponsor.name}
+                  width={180}
+                  height={90}
+                  sizes="(min-width: 768px) 12rem, 50vw"
                   className="max-w-full max-h-full object-contain filter grayscale group-hover:grayscale-0 duration-300 opacity-60 group-hover:opacity-100"
                 />
               </motion.div>

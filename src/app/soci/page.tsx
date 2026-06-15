@@ -3,6 +3,7 @@
 import React from "react"
 import { ArrowLeft, Disc3, Eye, Shirt, Users } from "lucide-react"
 import Link from "next/link"
+import Image from "next/image"
 
 import { Navbar01 } from "@/components/ui/shadcn-io/navbar-01"
 import OneTribeLogo from "@/app/svg/one-tribe-logo"
@@ -99,10 +100,12 @@ export default function SociPage() {
               return (
                 <article key={product.name} className="group bg-[#1E2543] border border-white/5 hover:border-brand-blue/35 overflow-hidden rounded-lg shadow-2xl duration-300">
                   <div className="relative aspect-[4/5] overflow-hidden bg-brand-navy">
-                    <img
+                    <Image
                       src={product.image}
                       alt={product.name}
-                      className="w-full h-full object-cover group-hover:scale-105 duration-700"
+                      fill
+                      sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
+                      className="object-cover group-hover:scale-105 duration-700"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-brand-navy via-transparent to-transparent opacity-85" />
                     <div className="absolute top-3 left-3 flex items-center gap-2 px-3 py-1 bg-brand-navy/80 border border-white/10 backdrop-blur-sm">

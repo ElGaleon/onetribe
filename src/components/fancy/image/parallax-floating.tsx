@@ -6,9 +6,9 @@ import React, {
     useCallback,
     useContext,
     useEffect,
-    useRef, useState,
+    useRef,
 } from "react"
-import {motion, useAnimationFrame} from "motion/react"
+import {useAnimationFrame} from "motion/react"
 
 import {cn} from "@/lib/utils"
 import {useMousePositionRef} from "@/hooks/use-mouse-position-ref"
@@ -105,12 +105,6 @@ interface FloatingElementProps {
     className?: string
     style?: React.CSSProperties
     depth?: number,
-    dragElastic?: number
-    dragConstraints?: { top?: number; left?: number; right?: number; bottom?: number } | React.RefObject<Element | null>
-    dragMomentum?: boolean,
-    dragTransition?: { bounceStiffness?: number; bounceDamping?: number },
-    dragPropagation?: boolean,
-    selectedOnTop?: boolean,
 }
 
 export const FloatingElement = ({
@@ -118,50 +112,22 @@ export const FloatingElement = ({
                                     className,
                                     style,
                                     depth = 1,
-                                    dragElastic = 0.5,
-                                    dragConstraints,
-                                    dragMomentum = true,
-                                    dragTransition = { bounceStiffness: 200, bounceDamping: 300 },
-                                    dragPropagation = true,
-                                    selectedOnTop = true,
                                 }: FloatingElementProps) => {
     const elementRef = useRef<HTMLDivElement>(null)
     const idRef = useRef(Math.random().toString(36).substring(7))
     const context = useContext(FloatingContext)
-    const constraintsRef = useRef<HTMLDivElement>(null)
-    const [zIndices, setZIndices] = useState<number[]>([])
-
-    const [isDragging, setIsDragging] = useState(false)
 
 
     useEffect(() => {
         if (!elementRef.current || !context) return
 
         const nonNullDepth = depth ?? 0.01
+        const id = idRef.current
 
-        context.registerElement(idRef.current, elementRef.current, nonNullDepth)
+        context.registerElement(id, elementRef.current, nonNullDepth)
 
-        setZIndices(
-            Array.from({length: React.Children.count(children)}, (_, i) => i)
-        )
-
-        return () => context.unregisterElement(idRef.current)
-    }, [children, context, depth])
-
-    const bringToFront = (index: number) => {
-        if (selectedOnTop) {
-            setZIndices((prevIndices) => {
-                const newIndices = [...prevIndices]
-                const currentIndex = newIndices.indexOf(index)
-                newIndices.splice(currentIndex, 1)
-                newIndices.push(index)
-                return newIndices
-            })
-        }
-    }
-
-
-
+        return () => context.unregisterElement(id)
+    }, [context, depth])
 
     return (
         <div

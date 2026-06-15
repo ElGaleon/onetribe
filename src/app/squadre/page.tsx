@@ -2,6 +2,7 @@
 
 import React, { useState } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { motion, AnimatePresence } from "motion/react"
 import { 
   Trophy, 
@@ -203,10 +204,12 @@ export default function Squadre() {
               
               {/* Image banner */}
               <div className="relative h-64 sm:h-80 w-full overflow-hidden rounded-xl border border-white/10 shadow-2xl p-1 bg-brand-navy">
-                <img 
+                <Image 
                   src={activeTeam.image} 
                   alt={activeTeam.name}
-                  className="w-full h-full object-cover rounded-lg"
+                  fill
+                  sizes="(min-width: 1024px) 42vw, 100vw"
+                  className="object-cover rounded-lg"
                 />
               </div>
 

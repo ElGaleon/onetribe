@@ -16,7 +16,7 @@ const Preview = () => {
 
     useEffect(() => {
         animate("img", {opacity: [0, 1]}, {duration: 0.5, delay: stagger(0.15)})
-    }, [])
+    }, [animate])
 
     return (
         <div

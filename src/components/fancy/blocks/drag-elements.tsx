@@ -139,7 +139,6 @@ const DragElements: React.FC<DragElementsProps> = ({
 }) => {
   const constraintsRef = useRef<HTMLDivElement>(null)
   const [zIndices, setZIndices] = useState<number[]>([])
-  const [isDragging, setIsDragging] = useState(false)
 
   useEffect(() => {
     setZIndices(
@@ -173,9 +172,8 @@ const DragElements: React.FC<DragElementsProps> = ({
           zIndex={zIndices.indexOf(index)}
           onDragStart={() => {
             bringToFront(index)
-            setIsDragging(true)
           }}
-          onDragEnd={() => setIsDragging(false)}
+          onDragEnd={() => undefined}
           dragOnLongPress={dragOnLongPress}
         />
       ))}
