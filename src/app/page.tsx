@@ -1,302 +1,123 @@
 "use client"
 
-import React, { useRef, useState, useEffect } from "react"
+import React, { useState, useEffect, useRef } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
-import { motion } from "motion/react"
+import { AnimatePresence, motion, useReducedMotion } from "motion/react"
 import { 
   ArrowRight, 
   Trophy, 
   Shield, 
-  Sparkles, 
   Mail, 
   MapPin, 
   Heart, 
-  FileText, 
-  Activity
+  FileText
 } from "lucide-react"
 
 import { Navbar01 } from "@/components/ui/shadcn-io/navbar-01"
 import OneTribeLogo from "@/app/svg/one-tribe-logo"
 import OneTribeText from "@/app/svg/one-tribe-text"
 import Floating, { FloatingElement } from "@/components/fancy/image/parallax-floating"
-import ImageTrail, { ImageTrailItem } from "@/components/fancy/image/image-trail"
-import { InstagramIcon } from "@/components/ui/social-icons"
 import { exampleImages } from "@/utils/demo-images"
 import { defaultArticles, type Article } from "./news/articles-data"
 
-import { gsap } from "gsap"
-import { ScrollTrigger } from "gsap/ScrollTrigger"
-import { useGSAP } from "@gsap/react"
-
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger)
-}
-
 const heroReels = [
-  { id: 1, videoSrc: "/videos/hero-reel.mp4", url: "https://www.instagram.com/p/DZHhqEYKOgq/", depth: 0.5, className: "top-[8%] left-[4%] md:left-[6%]" },
-  { id: 2, videoSrc: "/videos/reel-2.mp4", url: "https://www.instagram.com/p/DXmcgttCvd9/", depth: 0.9, className: "top-[12%] right-[4%] md:right-[6%]" },
-  { id: 3, videoSrc: "/videos/reel-3.mp4", url: "https://www.instagram.com/p/DXmBN0xCsD8/", depth: 0.7, className: "bottom-[16%] left-[16%] md:left-[20%]" },
-  { id: 4, videoSrc: "/videos/reel-4.mp4", url: "https://www.instagram.com/p/DYCQ0-uKr9O/", depth: 0.4, className: "bottom-[14%] right-[16%] md:right-[20%]" },
-  { id: 5, videoSrc: "/videos/reel-5.mp4", url: "https://www.instagram.com/p/DYHgSvwCvmm/?img_index=6", depth: 0.6, className: "top-[32%] left-[2%] md:left-[4%]" },
-  { id: 6, videoSrc: "/videos/reel-6.mp4", url: "https://www.instagram.com/p/DYJ7_jXqvQf/", depth: 0.8, className: "top-[35%] right-[2%] md:right-[4%]" },
-  { id: 7, videoSrc: "/videos/reel-7.mp4", url: "https://www.instagram.com/p/DY_983yuk9u/", depth: 0.55, className: "top-[5%] left-[28%] md:left-[32%]" },
-  { id: 8, videoSrc: "/videos/reel-8.mp4", url: "https://www.instagram.com/p/DZITLT7q2s0/", depth: 0.45, className: "bottom-[8%] left-[45%] md:left-[48%]" }
+  { id: 1, videoSrc: "/videos/hero-reel-h264.mp4" },
+  { id: 2, videoSrc: "/videos/reel-2-h264.mp4" },
+  { id: 3, videoSrc: "/videos/reel-3-h264.mp4" },
+  { id: 4, videoSrc: "/videos/reel-4-h264.mp4" },
+  { id: 5, videoSrc: "/videos/reel-5.mp4" },
+  { id: 6, videoSrc: "/videos/reel-6-h264.mp4" },
+  { id: 7, videoSrc: "/videos/reel-7-h264.mp4" },
+  { id: 8, videoSrc: "/videos/reel-8-h264.mp4" }
 ]
 
-interface ParallaxVideoCardProps {
-  reel: typeof heroReels[0]
-  position?: { top: number; left: number; rotate: number }
-  containerRef: React.RefObject<HTMLDivElement | null>
-}
+const HeroVideoBackdrop = () => {
+  const prefersReducedMotion = useReducedMotion()
+  const [activeIndex, setActiveIndex] = useState(() => Math.floor(Math.random() * heroReels.length))
+  const transitionStartedRef = useRef(false)
+  const activeReelIdRef = useRef(heroReels[activeIndex].id)
+  const activeReel = heroReels[activeIndex]
 
-const ParallaxVideoCard = ({ reel, position, containerRef }: ParallaxVideoCardProps) => {
-  const [isFlipped, setIsFlipped] = useState(false)
-  const isDraggingRef = useRef(false)
-  const videoRef = useRef<HTMLVideoElement>(null)
+  useEffect(() => {
+    transitionStartedRef.current = false
+    activeReelIdRef.current = activeReel.id
+  }, [activeReel.id])
 
-  const handleCardClick = (e: React.MouseEvent) => {
-    if (isDraggingRef.current) return
-    if (!isFlipped) {
-      e.preventDefault()
-      e.stopPropagation()
-      setIsFlipped(true)
-      const video = videoRef.current
-      if (video) {
-        video.currentTime = 0
-        void video.play()
+  const playNextReel = (reelId: number) => {
+    if (reelId !== activeReelIdRef.current || transitionStartedRef.current) return
+
+    transitionStartedRef.current = true
+    setActiveIndex((current) => {
+      if (heroReels.length <= 1) return current
+
+      let next = Math.floor(Math.random() * heroReels.length)
+      while (next === current) {
+        next = Math.floor(Math.random() * heroReels.length)
       }
-    }
+      return next
+    })
+  }
+
+  const handleVideoTimeUpdate = (event: React.SyntheticEvent<HTMLVideoElement>, reelId: number) => {
+    const video = event.currentTarget
+    if (!Number.isFinite(video.duration) || video.duration <= 0) return
+
+    const shouldCrossfade = video.duration - video.currentTime <= 1.35
+    if (!shouldCrossfade) return
+
+    playNextReel(reelId)
   }
 
   return (
-    <motion.div
-      layout
-      drag
-      dragConstraints={containerRef}
-      dragElastic={0.12}
-      dragMomentum={false}
-      onDragStart={() => {
-        isDraggingRef.current = true
-      }}
-      onDragEnd={() => {
-        window.setTimeout(() => {
-          isDraggingRef.current = false
-        }, 0)
-      }}
-      onDoubleClick={(e) => {
-        e.preventDefault()
-        e.stopPropagation()
-        if (isFlipped) window.open(reel.url, "_blank")
-      }}
-      className={`hero-reel-card absolute perspective-1000 select-none touch-none ${
-        isFlipped 
-          ? "w-[122px] h-[217px] sm:w-[144px] sm:h-[256px] md:w-[170px] md:h-[302px] cursor-grab" 
-          : "w-[78px] h-[62px] sm:w-[88px] sm:h-[70px] md:w-[104px] md:h-[82px] cursor-pointer"
-      }`}
-      style={position ? { top: position.top, left: position.left, rotate: position.rotate } : { opacity: 0 }}
-      onClick={handleCardClick}
-      whileDrag={{ scale: 1.04, cursor: "grabbing" }}
-    >
-      <motion.div
-        layout
-        className="w-full h-full preserve-3d relative"
-        animate={{ rotateY: isFlipped ? 180 : 0 }}
-        transition={{ duration: 0.6, ease: "easeInOut" }}
-      >
-        {/* Front Side: Fist Logo Cover (Only the logo shape itself) */}
-        <div className="absolute inset-0 w-full h-full bg-transparent flex items-center justify-center backface-hidden select-none">
-          <OneTribeLogo className="w-full h-full filter drop-shadow-[0_10px_25px_rgba(0,0,0,0.5)] hover:scale-105 duration-300 transition-transform" />
-        </div>
-
-        {/* Back Side: Video Loop in the original reel format */}
-        <div className="absolute inset-0 w-full h-full bg-transparent backface-hidden [transform:rotateY(180deg)] drop-shadow-2xl group">
-          <div className="relative w-full h-full overflow-hidden rounded-xl border border-white/10 bg-[#1E2543]">
-            <video
-              ref={videoRef}
-              loop
-              muted
-              playsInline
-              preload="auto"
-              className="absolute inset-0 w-full h-full object-cover pointer-events-none"
-            >
-              <source src={reel.videoSrc} type="video/mp4" />
-            </video>
-            <div className="absolute inset-0 bg-brand-navy/10 pointer-events-none" />
-            {/* Hover overlay with Instagram logo */}
-            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center gap-1 text-white pointer-events-none">
-              <InstagramIcon className="w-5 h-5 text-brand-red" />
-              <span className="font-montserrat text-[9px] font-bold uppercase tracking-wider">Doppio click</span>
-            </div>
-          </div>
-          
-          {/* Flip-back button */}
-          <button
-            onClick={(e) => {
-              e.preventDefault()
-              e.stopPropagation()
-              videoRef.current?.pause()
-              setIsFlipped(false)
-            }}
-            className="absolute bottom-2 right-2 w-5 h-5 rounded-full bg-black/60 border border-white/10 flex items-center justify-center text-[10px] text-white/70 hover:text-white hover:bg-black/90 cursor-pointer z-20"
-            title="Gira di nuovo"
+    <div className="absolute inset-0 overflow-hidden bg-[#11172C]">
+      <AnimatePresence initial={false}>
+        <motion.div
+          key={activeReel.id}
+          className="absolute inset-0"
+          initial={prefersReducedMotion ? false : { opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: prefersReducedMotion ? 0.2 : 1.2, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <motion.video
+            autoPlay
+            muted
+            playsInline
+            preload="metadata"
+            onTimeUpdate={(event) => handleVideoTimeUpdate(event, activeReel.id)}
+            onEnded={() => playNextReel(activeReel.id)}
+            className="absolute inset-0 h-full w-full object-cover grayscale contrast-[1.22] brightness-[0.72] saturate-0"
+            initial={prefersReducedMotion ? false : { scale: 1.018 }}
+            animate={{ scale: 1 }}
+            transition={{ duration: prefersReducedMotion ? 0.2 : 1.6, ease: [0.16, 1, 0.3, 1] }}
           >
-            ↺
-          </button>
-        </div>
-      </motion.div>
-    </motion.div>
+            <source src={activeReel.videoSrc} type="video/mp4" />
+          </motion.video>
+        </motion.div>
+      </AnimatePresence>
+      <div className="absolute inset-0 bg-[#10265D]/75 mix-blend-color" />
+      <div className="absolute inset-0 bg-[#11172C]/28 mix-blend-multiply" />
+      <div className="absolute inset-0 bg-[linear-gradient(115deg,rgba(13,30,72,0.42),transparent_44%,rgba(13,30,72,0.44))]" />
+      <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-brand-navy to-transparent" />
+    </div>
   )
 }
 
 export default function Home() {
   const router = useRouter()
-  const containerRef = useRef<HTMLDivElement>(null)
-  const heroRef = useRef<HTMLDivElement>(null)
-  const progettoRef = useRef<HTMLDivElement>(null)
+  const prefersReducedMotion = useReducedMotion()
+  const [showIntroLoader, setShowIntroLoader] = useState(true)
   const [articles, setArticles] = useState<Article[]>(defaultArticles)
-  const [cardPositions, setCardPositions] = useState<Record<number, { top: number; left: number; rotate: number }>>({})
 
   useEffect(() => {
-    const generatePositions = () => {
-      const width = window.innerWidth
-      const height = window.innerHeight
-      const heroTop = Math.max(heroRef.current?.getBoundingClientRect().top ?? 0, 0)
-      const visibleHeroHeight = Math.min(heroRef.current?.clientHeight ?? height, height - heroTop)
-      const expandedWidth = width >= 768 ? 170 : width >= 640 ? 144 : 122
-      const expandedHeight = width >= 768 ? 302 : width >= 640 ? 256 : 217
-      const marginX = width >= 768 ? 48 : 18
-      const marginTop = width >= 768 ? 42 : 24
-      const marginBottom = width >= 768 ? 42 : 24
-      const lanes = [
-        [0.06, 0.08],
-        [0.76, 0.1],
-        [0.18, 0.35],
-        [0.66, 0.38],
-        [0.04, 0.62],
-        [0.78, 0.62],
-        [0.39, 0.18],
-        [0.43, 0.7],
-      ]
-      const generated: Record<number, { top: number; left: number; rotate: number }> = {}
+    const timer = window.setTimeout(() => {
+      setShowIntroLoader(false)
+    }, prefersReducedMotion ? 450 : 1850)
 
-      heroReels.forEach((reel, index) => {
-        const [baseLeft, baseTop] = lanes[index % lanes.length]
-        const jitterX = (Math.random() - 0.5) * (width >= 768 ? 96 : 38)
-        const jitterY = (Math.random() - 0.5) * (width >= 768 ? 84 : 42)
-        const maxLeft = Math.max(marginX, width - expandedWidth - marginX)
-        const maxTop = Math.max(marginTop, visibleHeroHeight - expandedHeight - marginBottom)
-        const left = Math.min(maxLeft, Math.max(marginX, width * baseLeft + jitterX))
-        const top = Math.min(maxTop, Math.max(marginTop, visibleHeroHeight * baseTop + jitterY))
-        generated[reel.id] = {
-          top,
-          left,
-          rotate: Math.round((Math.random() - 0.5) * 18),
-        }
-      })
-
-      setCardPositions(generated)
-    }
-
-    generatePositions()
-    window.addEventListener("resize", generatePositions)
-    return () => window.removeEventListener("resize", generatePositions)
-  }, [])
-
-  // GSAP Scroll-linked animations
-  const heroScrollRef = useRef<HTMLDivElement>(null)
-  const bgOverlayRef = useRef<HTMLDivElement>(null)
-  const initialBgRef = useRef<HTMLDivElement>(null)
-  const heroTextRef = useRef<HTMLDivElement>(null)
-  const marqueeLine1Ref = useRef<HTMLDivElement>(null)
-  const marqueeLine2Ref = useRef<HTMLDivElement>(null)
-  const marqueeLine3Ref = useRef<HTMLDivElement>(null)
-
-  useGSAP(() => {
-    if (!heroRef.current) return
-
-    // 1. Hero Pinned Scroll Timeline
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: heroRef.current,
-        start: "top top",
-        end: "+=130%", // Pinned scroll duration (130% of viewport height)
-        pin: true,
-        scrub: true,
-        anticipatePin: 1,
-      }
-    })
-
-    // Blue wash first: it covers the scattered reels before the logo/text appears.
-    tl.to(bgOverlayRef.current, { opacity: 1, duration: 0.35, ease: "none" }, 0)
-    tl.to(initialBgRef.current, { opacity: 0, duration: 0.3, ease: "none" }, 0)
-
-    // Hero Text Reveal: Badge, Logo, Title SVG, paragraph, CTAs
-    tl.fromTo(heroTextRef.current,
-      { opacity: 0, y: 80, scale: 0.9 },
-      { opacity: 1, y: 0, scale: 1, duration: 0.45, ease: "power2.out" },
-      0.42
-    )
-
-    // Toggle pointer events reactively
-    tl.set(heroTextRef.current, { pointerEvents: "auto" }, 0.62)
-    tl.set(heroTextRef.current, { pointerEvents: "none" }, 0)
-
-    tl.to(".hero-reel-card", {
-      opacity: 0,
-      scale: 0.55,
-      y: -120,
-      duration: 0.3,
-      stagger: 0.015,
-      ease: "power1.out",
-    }, 0)
-
-    // 2. Project scrolling text marquee values
-    if (progettoRef.current) {
-      gsap.fromTo(marqueeLine1Ref.current, 
-        { xPercent: 0 },
-        {
-          xPercent: -20,
-          ease: "none",
-          scrollTrigger: {
-            trigger: progettoRef.current,
-            start: "top bottom",
-            end: "bottom top",
-            scrub: true,
-          }
-        }
-      )
-
-      gsap.fromTo(marqueeLine2Ref.current, 
-        { xPercent: -20 },
-        {
-          xPercent: 0,
-          ease: "none",
-          scrollTrigger: {
-            trigger: progettoRef.current,
-            start: "top bottom",
-            end: "bottom top",
-            scrub: true,
-          }
-        }
-      )
-
-      gsap.fromTo(marqueeLine3Ref.current, 
-        { xPercent: 0 },
-        {
-          xPercent: -15,
-          ease: "none",
-          scrollTrigger: {
-            trigger: progettoRef.current,
-            start: "top bottom",
-            end: "bottom top",
-            scrub: true,
-          }
-        }
-      )
-    }
-  }, { scope: containerRef })
+    return () => window.clearTimeout(timer)
+  }, [prefersReducedMotion])
 
   useEffect(() => {
     const saved = localStorage.getItem("one_tribe_news")
@@ -330,7 +151,7 @@ export default function Home() {
     { name: "Meridiana Medical", url: "https://www.onetribeultimate.it/images/sponsor/logo-sponsor-meridiana-medical_webready.webp" },
     { name: "Creatiwe", url: "https://www.onetribeultimate.it/images/sponsor/logo-sponsor-creatiwe_webready.webp" },
     { name: "Espresso", url: "https://www.onetribeultimate.it/images/sponsor/logo-sponsor-espresso_webready.webp" },
-    { name: "Hanky & Panky – Parrucchieri", url: "https://www.onetribeultimate.it/images/sponsor/logo-sponsor-hanky_webready.webp" },
+    { name: "Hanky & Panky - Parrucchieri", url: "https://www.onetribeultimate.it/images/sponsor/logo-sponsor-hanky_webready.webp" },
   ]
 
   const handleScrollTo = (id: string) => {
@@ -339,256 +160,128 @@ export default function Home() {
   }
 
   return (
-    <div
-      ref={containerRef}
-      className="min-h-screen bg-brand-navy text-foreground font-sans overflow-x-hidden selection:bg-brand-red selection:text-white"
-    >
-      {/* Dynamic Sticky Blurred Navbar */}
+    <div className="min-h-screen bg-brand-navy text-foreground font-sans overflow-x-hidden selection:bg-brand-red selection:text-white">
+      <AnimatePresence>
+        {showIntroLoader && (
+          <motion.div
+            className="fixed inset-0 z-[80] flex items-center justify-center overflow-hidden bg-[#11172C]"
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0, y: -24 }}
+            transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <div className="absolute inset-0 bg-logo-pattern opacity-[0.16]" />
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_42%,rgba(141,179,229,0.16),transparent_58%)]" />
+            <div className="relative z-10 flex w-full max-w-5xl flex-col items-center px-6 text-center">
+              <motion.div
+                initial={prefersReducedMotion ? false : { opacity: 0, y: 18 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                className="mb-7"
+              >
+                <OneTribeLogo className="h-24 w-auto drop-shadow-[0_22px_50px_rgba(8,12,28,0.45)] md:h-32" />
+              </motion.div>
+
+              <div className="grid w-full grid-cols-1 gap-2 sm:grid-cols-3 sm:gap-4">
+                {["Libertà", "Lealtà", "Inclusione"].map((value, index) => (
+                  <motion.div
+                    key={value}
+                    initial={prefersReducedMotion ? false : { opacity: 0, y: 28 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.18 + index * 0.14, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+                    className="border-y border-white/[0.12] py-4"
+                  >
+                    <span className="font-bebas text-5xl uppercase italic leading-none tracking-tight text-white md:text-7xl">
+                      {value}
+                    </span>
+                  </motion.div>
+                ))}
+              </div>
+
+              <motion.div
+                className="mt-8 h-px w-full max-w-xl overflow-hidden bg-white/[0.12]"
+                initial={prefersReducedMotion ? false : { opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.55, duration: 0.35 }}
+              >
+                <motion.div
+                  className="h-full bg-brand-red"
+                  initial={{ x: "-100%" }}
+                  animate={{ x: "0%" }}
+                  transition={{ duration: prefersReducedMotion ? 0.25 : 1.05, delay: 0.62, ease: [0.16, 1, 0.3, 1] }}
+                />
+              </motion.div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <Navbar01 
         logo={<OneTribeLogo className="py-2 h-10 cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} />}
         navigationLinks={navLinks}
         signInText="Accedi a Golee"
-        ctaText="Entra in ONE TRIBE"
+        ctaText="Entra nel club"
         onSignInClick={() => window.open("https://app.golee.it", "_blank")}
         onCtaClick={() => router.push("/contatti")}
-        className="sticky top-0 z-[100] bg-brand-navy/90 backdrop-blur-md border-b border-white/5"
       />
 
-      {/* Pinned Scroll Wrapper */}
-      <div ref={heroScrollRef} className="relative w-full bg-brand-navy">
-        {/* Pinned Hero Container */}
-        <section 
-          ref={heroRef} 
-          className="relative w-full h-screen overflow-hidden flex flex-col justify-center items-center px-4 bg-logo-pattern z-10"
+      <section className="relative w-full min-h-[100dvh] overflow-hidden flex flex-col justify-center items-center px-4 bg-brand-navy z-10">
+        <HeroVideoBackdrop />
+
+        <motion.div
+          initial={prefersReducedMotion ? false : { opacity: 0, y: 24, scale: 0.98 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+          className="relative z-10 flex flex-col items-center justify-center px-4 pt-16 text-center"
         >
-          {/* Blue Background Overlay */}
-          <div
-            ref={bgOverlayRef}
-            style={{ opacity: 0 }}
-            className="absolute inset-0 bg-brand-navy pointer-events-none z-[6]"
-          />
-
-          {/* Initial Background Gradient (fades out as blue background fades in) */}
-          <div 
-            ref={initialBgRef}
-            style={{ opacity: 1 }}
-            className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(112,165,237,0.22),transparent_70%)] pointer-events-none z-0"
-          />
-
-          {/* Random Logo/Reel Cards */}
-          <div className="absolute inset-0 w-full h-full z-5 overflow-hidden">
-            {heroReels.map((reel) => (
-              <ParallaxVideoCard
-                key={reel.id}
-                reel={reel}
-                position={cardPositions[reel.id]}
-                containerRef={heroRef}
-              />
-            ))}
-          </div>
-
-          {/* Hollow Watermark backdrop */}
-          <div className="absolute bottom-4 left-0 w-full text-center overflow-hidden pointer-events-none select-none z-1">
-            <div className="font-bebas text-[16vw] text-outline opacity-10 tracking-tighter uppercase italic transform -skew-x-12 leading-none">
-              BOLOGNA
-            </div>
-          </div>
-
-          {/* Hero Main Content */}
-          <div 
-            ref={heroTextRef}
-            style={{ 
-              opacity: 0, 
-              pointerEvents: "none" 
-            }}
-            className="absolute inset-0 z-10 text-center flex flex-col items-center justify-center px-4"
-          >
-            {/* Badge */}
-            <div
-              className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-red/10 border border-brand-red/30 text-brand-blue text-xs font-semibold tracking-widest uppercase font-montserrat mb-6 shadow-[0_0_15px_rgba(146,23,46,0.1)]"
-            >
-              <Sparkles className="w-3.5 h-3.5 text-brand-red animate-pulse" />
-              Bologna Capitale dell&apos;Ultimate
-            </div>
-
-            {/* Logo Container in the Center */}
-            <div className="flex flex-col items-center justify-center mb-6 w-full">
-              {/* Fist Logo */}
-              <OneTribeLogo className="hero-center-fist w-28 sm:w-36 md:w-44 h-auto mb-6 filter drop-shadow-[0_0_35px_rgba(112,165,237,0.35)]" />
-              {/* One Tribe Logo Text SVG */}
+            <div className="flex w-full flex-col items-center justify-center">
+              <OneTribeLogo className="hero-center-fist mb-6 h-auto w-28 drop-shadow-[0_22px_45px_rgba(8,12,28,0.45)] sm:w-36 md:w-44" />
               <div
-                className="w-[300px] sm:w-[520px] md:w-[720px] max-w-[92vw] h-auto drop-shadow-[0_0_35px_rgba(112,165,237,0.25)] select-none pointer-events-none"
+                className="h-auto w-[300px] max-w-[92vw] select-none drop-shadow-[0_28px_70px_rgba(8,12,28,0.48)] pointer-events-none sm:w-[520px] md:w-[720px]"
               >
                 <OneTribeText className="hero-center-text w-full h-auto text-white fill-white" />
               </div>
             </div>
 
             <p
-              className="font-montserrat text-base md:text-lg text-muted-foreground uppercase tracking-widest mt-6 max-w-3xl text-center leading-relaxed"
+              className="mt-6 max-w-xl text-center font-montserrat text-sm leading-relaxed text-[#E3E8F4] md:text-base"
             >
-              La prima società di Ultimate Frisbee in Italia per numero di atleti e corsi. Condividiamo sul campo i valori di libertà, lealtà e inclusione.
+              Squadre, corsi e una comunità costruita su libertà, lealtà e inclusione.
             </p>
 
-            {/* Action CTAs */}
-            <div className="flex flex-col sm:flex-row gap-4 mt-10 z-20">
+            <div className="z-20 mt-8 flex flex-col gap-3 sm:flex-row">
               <button
                 onClick={() => handleScrollTo("tesseramento")}
-                className="group relative px-8 py-4 bg-brand-red text-white font-montserrat font-bold uppercase tracking-wider text-xs transform -skew-x-12 hover:scale-105 duration-300 cursor-pointer shadow-lg shadow-brand-red/30 hover:shadow-brand-red/50 overflow-hidden"
+                className="group relative px-6 py-3.5 rounded-sm bg-brand-red text-white font-montserrat font-semibold uppercase tracking-[0.14em] text-xs transition-all duration-300 cursor-pointer shadow-[0_18px_45px_rgba(162,41,59,0.28)] hover:-translate-y-0.5 hover:bg-[#B23347] active:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue/80"
               >
-                <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out" />
                 <span className="flex items-center gap-2">
-                  Entra in ONE TRIBE
+                  Entra nel club
                   <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1 duration-200" />
                 </span>
               </button>
               
               <button
                 onClick={() => handleScrollTo("progetto")}
-                className="group px-8 py-4 border-2 border-brand-blue/80 text-brand-blue hover:text-white font-montserrat font-bold uppercase tracking-wider text-xs transform -skew-x-12 hover:bg-brand-blue/20 duration-300 cursor-pointer"
+                className="group px-6 py-3.5 rounded-sm border border-white/[0.22] bg-black/15 text-white backdrop-blur-sm hover:text-brand-navy font-montserrat font-semibold uppercase tracking-[0.14em] text-xs hover:bg-brand-blue duration-300 cursor-pointer active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue/80"
               >
-                Scopri il Progetto
+                Scopri il progetto
               </button>
             </div>
 
-          </div>
-        </section>
-      </div>
+        </motion.div>
+      </section>
 
-      {/* Latest News Section (Inter.it style with Social Colors) */}
-      {articles.length > 0 && (
-        <section id="news" className="relative py-16 px-4 md:px-8 bg-brand-navy border-y border-white/5 select-none bg-grid-pattern">
-          <div className="max-w-7xl mx-auto">
-            {/* Header: Title on left, Link on right */}
-            <div className="flex justify-between items-end border-b border-white/10 pb-4 mb-8">
-              <h2 className="font-montserrat font-bold text-xl md:text-2xl text-white tracking-wide uppercase">
-                ULTIME NOTIZIE
-              </h2>
-              <Link 
-                href="/news" 
-                className="font-montserrat text-xs font-bold text-white hover:text-brand-red transition-colors duration-200 border-b border-white hover:border-brand-red pb-0.5"
-              >
-                Tutte le notizie
-              </Link>
-            </div>
-
-            {/* 4-Column Horizontal Layout */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch">
-              {/* Columns 1, 2, 3: News Articles */}
-              {articles.slice(0, 3).map((article) => (
-                <Link
-                  key={article.id}
-                  href={`/news/${article.id}`}
-                  className="group flex flex-col gap-4"
-                >
-                  {/* Portrait Image */}
-                  <div className="relative aspect-[3/4] w-full overflow-hidden bg-brand-navy rounded-none border border-white/5 group-hover:border-brand-blue/30 transition-all duration-300">
-                    <Image
-                      src={article.image}
-                      alt={article.title}
-                      fill
-                      sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
-                      className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
-                    />
-                  </div>
-                  {/* Article Info */}
-                  <div className="space-y-2">
-                    <div className="font-montserrat text-[10px] md:text-xs font-bold uppercase tracking-wider">
-                      <span className="text-brand-blue">{article.category}</span>
-                      <span className="mx-2 text-white/30">—</span>
-                      <span className="text-muted-foreground">{article.date}</span>
-                    </div>
-                    <h3 className="font-montserrat font-bold text-white text-base md:text-lg leading-snug group-hover:text-brand-blue transition-colors duration-200">
-                      {article.title}
-                    </h3>
-                  </div>
-                </Link>
-              ))}
-
-              {/* Column 4: Promo Call to Action Card */}
-              <Link
-                href="/contatti"
-                className="group relative flex flex-col justify-between p-6 overflow-hidden aspect-[3/4] w-full bg-[#1E2543] border border-white/5 hover:border-brand-blue/30 shadow-2xl transition-all duration-500"
-              >
-                {/* Full bleed background image */}
-                <div className="absolute inset-0 w-full h-full">
-                  <Image
-                    src="/images/onetribe-5.jpg"
-                    alt="Promo Kit"
-                    fill
-                    sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
-                    className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-brand-navy via-brand-navy/60 to-brand-navy/30 opacity-95" />
-                </div>
-
-                {/* Top Label */}
-                <div className="relative z-10">
-                  <span className="font-montserrat font-bold text-[10px] uppercase tracking-widest text-brand-blue">
-                    HOME KIT 26/27
-                  </span>
-                  <h3 className="font-montserrat font-black text-xl text-white uppercase tracking-tight mt-1">
-                    DIVISA UFFICIALE<br/>ONE TRIBE
-                  </h3>
-                </div>
-
-                {/* Right Arrow on middle edge */}
-                <div className="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-brand-navy/60 border border-white/10 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300">
-                  <ArrowRight className="w-4 h-4" />
-                </div>
-
-                {/* Bottom White Button */}
-                <div className="relative z-10 flex">
-                  <span className="px-5 py-2 bg-brand-red text-white font-montserrat font-bold text-[10px] uppercase tracking-widest group-hover:bg-brand-blue transition-colors duration-300">
-                    ACQUISTA
-                  </span>
-                </div>
-              </Link>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* Dynamic Continuous Marquee Ticker */}
-      <div className="w-full bg-brand-red py-3.5 overflow-hidden border-y border-white/10 rotate-1 transform scale-105 select-none shadow-[0_4px_25px_rgba(0,0,0,0.35)]">
-        <div className="flex whitespace-nowrap animate-[marquee_30s_linear_infinite] gap-16 font-bebas text-2xl md:text-3xl italic uppercase tracking-widest text-white/95">
-          <span>LIBERTÀ</span>
-          <span className="text-brand-blue">•</span>
-          <span>LEALTÀ</span>
-          <span className="text-brand-blue">•</span>
-          <span>INCLUSIONE</span>
-          <span className="text-brand-blue">•</span>
-          <span>BOLOGNA ULTIMATE FRISBEE</span>
-          <span className="text-brand-blue">•</span>
-          <span>ONE TRIBE</span>
-          <span className="text-brand-blue">•</span>
-          <span>SPIRIT OF THE GAME</span>
-          <span className="text-brand-blue">•</span>
-          
-          <span>LIBERTÀ</span>
-          <span className="text-brand-blue">•</span>
-          <span>LEALTÀ</span>
-          <span className="text-brand-blue">•</span>
-          <span>INCLUSIONE</span>
-          <span className="text-brand-blue">•</span>
-          <span>BOLOGNA ULTIMATE FRISBEE</span>
-          <span className="text-brand-blue">•</span>
-          <span>ONE TRIBE</span>
-          <span className="text-brand-blue">•</span>
-          <span>SPIRIT OF THE GAME</span>
-          <span className="text-brand-blue">•</span>
+      <div className="w-full bg-[#151C34] py-4 border-y border-white/[0.07] select-none">
+        <div className="max-w-7xl mx-auto px-4 md:px-8 grid grid-cols-2 md:grid-cols-4 gap-4 font-montserrat text-[11px] font-semibold uppercase tracking-[0.14em] text-white/[0.72]">
+          <span>Libertà</span>
+          <span>Lealtà</span>
+          <span>Inclusione</span>
+          <span>Spirit of the Game</span>
         </div>
       </div>
 
-      {/* Il Progetto Section */}
-      <section ref={progettoRef} id="progetto" className="relative py-28 px-4 md:px-8 bg-brand-navy bg-dots-pattern overflow-hidden border-b border-white/5">
-        {/* Background outlined text */}
-        <div className="absolute -top-10 -right-10 font-bebas text-[22vw] text-outline opacity-5 tracking-tighter uppercase italic select-none pointer-events-none transform -skew-x-12">
-          PROJECT
-        </div>
+      <section id="progetto" className="relative py-28 px-4 md:px-8 bg-brand-navy overflow-hidden border-b border-white/5">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10 mb-14">
 
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10 mb-12">
-          
-          {/* Left Block: Bold Big Text */}
           <div className="lg:col-span-5 space-y-4">
             <h2 className="font-bebas text-6xl md:text-8xl uppercase italic tracking-tighter text-white transform -skew-x-12 leading-none">
               IL PROGETTO<br/>
@@ -597,7 +290,6 @@ export default function Home() {
             <div className="w-20 h-1.5 bg-brand-red transform -skew-x-12 mt-6" />
           </div>
 
-          {/* Right Block: Content */}
           <div className="lg:col-span-7 space-y-6 text-muted-foreground font-sans text-base md:text-lg leading-relaxed">
             <p>
               L’Ultimate Frisbee è uno sport in grandissima crescita che sta vivendo il passaggio da sport di nicchia, amatoriale, dove la passione ed il coinvolgimento personale sono decisivi, ad attività strutturata che necessita di un approccio più professionale, sia dal punto di vista organizzativo che da quello tecnico.
@@ -609,117 +301,110 @@ export default function Home() {
 
         </div>
 
-        {/* Scroll Text Lines Banner (Full Width Breakout) */}
-        <div className="w-screen relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] bg-brand-red py-8 md:py-12 overflow-hidden select-none border-y border-white/10 shadow-[0_4px_25px_rgba(0,0,0,0.3)] z-10">
-          <div className="flex flex-col gap-3 md:gap-5">
-            
-            {/* Line 1: LIBERTÀ */}
-            <div className="flex whitespace-nowrap overflow-hidden">
-              <div 
-                ref={marqueeLine1Ref} 
-                className="flex gap-8 font-bebas text-5xl sm:text-7xl md:text-9xl italic uppercase tracking-wider text-brand-navy"
-              >
-                <span>LIBERTÀ</span><span className="text-brand-navy/35">•</span>
-                <span>LIBERTÀ</span><span className="text-brand-navy/35">•</span>
-                <span>LIBERTÀ</span><span className="text-brand-navy/35">•</span>
-                <span>LIBERTÀ</span><span className="text-brand-navy/35">•</span>
-                <span>LIBERTÀ</span><span className="text-brand-navy/35">•</span>
-                <span>LIBERTÀ</span><span className="text-brand-navy/35">•</span>
-                <span>LIBERTÀ</span><span className="text-brand-navy/35">•</span>
-                <span>LIBERTÀ</span>
-              </div>
-            </div>
-
-            {/* Line 2: LEALTÀ */}
-            <div className="flex whitespace-nowrap overflow-hidden">
-              <div 
-                ref={marqueeLine2Ref} 
-                className="flex gap-8 font-bebas text-5xl sm:text-7xl md:text-9xl italic uppercase tracking-wider text-brand-navy"
-              >
-                <span>LEALTÀ</span><span className="text-brand-navy/35">•</span>
-                <span>LEALTÀ</span><span className="text-brand-navy/35">•</span>
-                <span>LEALTÀ</span><span className="text-brand-navy/35">•</span>
-                <span>LEALTÀ</span><span className="text-brand-navy/35">•</span>
-                <span>LEALTÀ</span><span className="text-brand-navy/35">•</span>
-                <span>LEALTÀ</span><span className="text-brand-navy/35">•</span>
-                <span>LEALTÀ</span><span className="text-brand-navy/35">•</span>
-                <span>LEALTÀ</span>
-              </div>
-            </div>
-
-            {/* Line 3: INCLUSIONE */}
-            <div className="flex whitespace-nowrap overflow-hidden">
-              <div 
-                ref={marqueeLine3Ref} 
-                className="flex gap-8 font-bebas text-5xl sm:text-7xl md:text-9xl italic uppercase tracking-wider text-brand-navy"
-              >
-                <span>INCLUSIONE</span><span className="text-brand-navy/35">•</span>
-                <span>INCLUSIONE</span><span className="text-brand-navy/35">•</span>
-                <span>INCLUSIONE</span><span className="text-brand-navy/35">•</span>
-                <span>INCLUSIONE</span><span className="text-brand-navy/35">•</span>
-                <span>INCLUSIONE</span><span className="text-brand-navy/35">•</span>
-                <span>INCLUSIONE</span><span className="text-brand-navy/35">•</span>
-                <span>INCLUSIONE</span>
-              </div>
-            </div>
-
-          </div>
-        </div>
-      </section>
-
-
-
-      {/* Interactive Photo Reveal Playground */}
-      <section className="relative w-full h-[75vh] bg-[#1E2543] border-y border-white/5 flex flex-col justify-center items-center overflow-hidden select-none">
-        
-        {/* Background Watermark */}
-        <h2 className="absolute pointer-events-none font-bebas text-8xl md:text-[12rem] text-white/[0.02] uppercase italic tracking-tighter text-center leading-none transform -skew-6">
-          LA TRIBÙ IN AZIONE
-        </h2>
-
-        {/* Cursor Image Trail */}
-        <ImageTrail
-          threshold={80}
-          intensity={0.65}
-          baseZIndex={20}
-          className="absolute inset-0 cursor-crosshair z-10"
-        >
-          {exampleImages.map((img, idx) => (
-            <ImageTrailItem key={idx} className="relative w-52 h-36 md:w-60 md:h-44 rounded-lg overflow-hidden border-2 border-brand-blue/30 shadow-2xl p-1 bg-brand-navy">
-              <Image
-                src={img.url}
-                alt="One Tribe Action"
-                fill
-                sizes="(min-width: 768px) 15rem, 13rem"
-                className="object-cover rounded"
-                draggable={false}
-              />
-            </ImageTrailItem>
+        <div className="max-w-7xl mx-auto grid grid-cols-1 gap-4 md:grid-cols-3">
+          {[
+            ["Libertà", "Allenarsi, giocare e crescere dentro uno sport che chiede responsabilità personale."],
+            ["Lealtà", "Ogni chiamata in campo parte dal rispetto: dell'avversario, della squadra, del gioco."],
+            ["Inclusione", "Gruppi misti, percorsi giovani e spazi aperti a chi vuole provare davvero."]
+          ].map(([title, body]) => (
+            <article key={title} className="rounded-xl border border-white/[0.08] bg-[#192039]/70 p-6 shadow-[0_20px_65px_rgba(8,12,28,0.18)]">
+              <h3 className="font-bebas text-4xl uppercase italic leading-none tracking-tight text-white">
+                {title}
+              </h3>
+              <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
+                {body}
+              </p>
+            </article>
           ))}
-        </ImageTrail>
-
-        {/* Overlay Banner */}
-        <div className="z-20 pointer-events-none text-center px-4">
-          <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            className="flex flex-col items-center"
-          >
-            <Activity className="w-8 h-8 text-brand-blue animate-pulse mb-3" />
-            <p className="font-bebas text-3xl md:text-4xl text-white uppercase italic tracking-wider">
-              Esplora con il mouse
-            </p>
-            <p className="font-montserrat text-xs text-brand-blue/70 uppercase tracking-widest mt-1">
-              Muovi il cursore per scorrere i nostri scatti storici
-            </p>
-          </motion.div>
         </div>
       </section>
+
+      {articles.length > 0 && (
+        <section id="news" className="relative py-20 px-4 md:px-8 bg-[#1B223D] border-y border-white/[0.08] select-none">
+          <div className="max-w-7xl mx-auto">
+            <div className="flex flex-col gap-4 border-b border-white/10 pb-5 mb-9 sm:flex-row sm:items-end sm:justify-between">
+              <h2 className="font-bebas text-5xl md:text-6xl text-white tracking-tight uppercase italic leading-none">
+                Ultime <span className="text-brand-blue">notizie</span>
+              </h2>
+              <Link 
+                href="/news" 
+                className="font-montserrat text-xs font-semibold text-white/[0.78] hover:text-white transition-colors duration-200 border-b border-white/30 hover:border-brand-blue pb-1 w-max uppercase tracking-[0.14em]"
+              >
+                Tutte le notizie
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 items-stretch">
+              {articles.slice(0, 3).map((article) => (
+                <Link
+                  key={article.id}
+                  href={`/news/${article.id}`}
+                  className="group flex flex-col gap-4 rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-brand-blue/80"
+                >
+                  <div className="relative aspect-[4/5] w-full overflow-hidden bg-brand-navy rounded-sm border border-white/[0.07] group-hover:border-brand-blue/[0.26] transition-all duration-300 shadow-[0_24px_65px_rgba(8,12,28,0.22)]">
+                    <Image
+                      src={article.image}
+                      alt={article.title}
+                      fill
+                      sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
+                      className="object-cover grayscale-[18%] group-hover:grayscale-0 group-hover:scale-[1.035] transition-all duration-700 ease-out"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#11172C]/55 via-transparent to-transparent opacity-80" />
+                  </div>
+                  <div className="space-y-2">
+                    <div className="font-montserrat text-[10px] md:text-xs font-semibold uppercase tracking-[0.14em]">
+                      <span className="text-brand-blue">{article.category}</span>
+                      <span className="mx-2 text-white/30">-</span>
+                      <span className="text-muted-foreground">{article.date}</span>
+                    </div>
+                    <h3 className="font-montserrat font-semibold text-white text-base md:text-lg leading-snug text-pretty group-hover:text-brand-blue transition-colors duration-200">
+                      {article.title}
+                    </h3>
+                  </div>
+                </Link>
+              ))}
+
+              <Link
+                href="/contatti"
+                className="group relative flex flex-col justify-between p-6 overflow-hidden aspect-[4/5] w-full rounded-sm bg-[#18203A] border border-white/[0.07] hover:border-brand-blue/[0.26] shadow-[0_28px_80px_rgba(8,12,28,0.28)] transition-all duration-500 outline-none focus-visible:ring-2 focus-visible:ring-brand-blue/80"
+              >
+                <div className="absolute inset-0 w-full h-full">
+                  <Image
+                    src="/images/onetribe-5.jpg"
+                    alt="Divisa ufficiale One Tribe indossata in campo"
+                    fill
+                    sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
+                    className="object-cover group-hover:scale-[1.035] transition-transform duration-700 ease-out"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#11172C] via-[#202847]/70 to-[#202847]/20 opacity-95" />
+                </div>
+
+                <div className="relative z-10">
+                  <span className="font-montserrat font-semibold text-[10px] uppercase tracking-[0.16em] text-brand-blue">
+                    HOME KIT 26/27
+                  </span>
+                  <h3 className="font-bebas text-4xl text-white uppercase italic tracking-tight mt-2 leading-none">
+                    Divisa ufficiale<br/>One Tribe
+                  </h3>
+                </div>
+
+                <div className="absolute right-4 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-sm bg-brand-navy/70 border border-white/10 flex items-center justify-center text-white opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300">
+                  <ArrowRight className="w-4 h-4" />
+                </div>
+
+                <div className="relative z-10 flex">
+                  <span className="px-4 py-2 rounded-sm bg-brand-red text-white font-montserrat font-semibold text-[10px] uppercase tracking-[0.14em] group-hover:bg-[#B23347] transition-colors duration-300">
+                    Acquista
+                  </span>
+                </div>
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* History Sections */}
       <section id="storia" className="relative py-28 px-4 md:px-8 bg-brand-navy bg-dots-pattern overflow-hidden border-y border-white/5">
-        {/* Background watermark */}
         <div className="absolute top-10 left-10 font-bebas text-[20vw] text-outline-blue opacity-[0.03] tracking-tighter uppercase italic select-none pointer-events-none transform -skew-x-12">
           EST. 2009
         </div>
@@ -729,10 +414,9 @@ export default function Home() {
 
         <div className="max-w-7xl mx-auto space-y-24 relative z-10">
           
-          {/* History of One Tribe */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             <div className="lg:col-span-5 space-y-4">
-              <span className="font-bebas text-brand-red text-xl tracking-widest uppercase italic">Dal 2009 ad Oggi</span>
+              <span className="font-bebas text-brand-red text-xl tracking-wide uppercase italic">Dal 2009 a oggi</span>
               <h3 className="font-bebas text-5xl md:text-7xl uppercase italic tracking-tighter text-white transform -skew-x-12 leading-none mt-2">
                 STORIA DI<br/><span className="text-brand-blue">ONE TRIBE</span>
               </h3>
@@ -747,17 +431,16 @@ export default function Home() {
                 Allora, a vestire la maglia della squadra erano poco più di 10 atleti. Nel tempo, i numeri ed il livello di gioco sono cresciuti esponenzialmente, portando la squadra Alligators ad una riorganizzazione e alla decisione di costituire una nuova associazione sportiva dilettantistica.
               </p>
               <p className="text-white font-medium">
-                Così nel luglio 2023 nasce la squadra One Tribe, che con i suoi oltre 200 atleti suddivisi tra squadre agonistiche e corsi di avviamento è la prima società in Italia e una delle maiores in Europa.
+                Così nel luglio 2023 nasce la squadra One Tribe, che con i suoi oltre 200 atleti suddivisi tra squadre agonistiche e corsi di avviamento è la prima società in Italia e una delle maggiori in Europa.
               </p>
             </div>
           </div>
 
           <hr className="border-white/5" />
 
-          {/* History of the Disc */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             <div className="lg:col-span-5 space-y-4">
-              <span className="font-bebas text-brand-blue text-xl tracking-widest uppercase italic">Cenni sullo Sport</span>
+              <span className="font-bebas text-brand-blue text-xl tracking-wide uppercase italic">Cenni sullo sport</span>
               <h3 className="font-bebas text-5xl md:text-7xl uppercase italic tracking-tighter text-white transform -skew-x-12 leading-none mt-2">
                 STORIA DEL<br/><span className="text-brand-red">DISCO</span>
               </h3>
@@ -780,117 +463,108 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Chi Siamo - Bologna Capitale */}
-      <section className="relative py-28 px-4 md:px-8 bg-[#1E2543] bg-grid-pattern border-y border-white/5 overflow-hidden">
-        {/* Background outlined text */}
-        <div className="absolute bottom-6 right-6 font-bebas text-[24vw] text-outline-blue opacity-[0.03] tracking-tighter uppercase italic select-none pointer-events-none transform -skew-x-12">
-          BOLOGNA
-        </div>
-
-        <div className="max-w-5xl mx-auto text-center space-y-8 relative z-10">
-          <div className="flex items-center justify-center gap-2 px-3 py-1 rounded-full bg-brand-blue/10 border border-brand-blue/30 text-brand-blue text-xs font-semibold uppercase tracking-wider font-montserrat w-max mx-auto">
-            <Trophy className="w-4.5 h-4.5" />
-            Focus Sportivo
-          </div>
-          
-          <h2 className="font-bebas text-5xl md:text-7xl uppercase italic tracking-tighter text-white transform -skew-x-12">
-            CHI <span className="text-brand-blue">SIAMO</span>
-          </h2>
-
-          <div className="w-16 h-1.5 bg-brand-red mx-auto mt-4 transform -skew-x-12" />
-
-          <div className="space-y-6 text-muted-foreground font-sans text-base md:text-lg leading-relaxed max-w-4xl mx-auto">
-            <p>
-              Chi dice Bologna dice tortellini, le due Torri, San Luca, ma anche Ultimate Frisbee. In pochi sanno che da alcuni anni <strong>Bologna è diventata la capitale europea dell&apos;Ultimate</strong>: sport di squadra giocato 7 contro 7 su campi in erba da 100m x 37m. L&apos;obiettivo del gioco è quello di prendere al volo il disco nell&apos;area di meta avversaria tramite passaggi tra compagni, senza però né camminare né correre con il disco in mano. Con l&apos;Ultimate non c&apos;è arbitro, le decisioni vengono prese in campo dai giocatori nel pieno rispetto del fair play. Da qui nasce uno sport dinamico, semplice e altamente spettacolare.
-            </p>
-            <p className="text-white font-medium">
-              Proprio grazie al coinvolgimento che questo sport crea, la provincia di Bologna siede sul tetto d&apos;Europa sia per i risultati raggiunti sia per il numero di giocatori.
-            </p>
+      <section className="relative overflow-hidden border-y border-white/[0.08] bg-[#192039] px-4 py-24 md:px-8">
+        <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 lg:grid-cols-12 lg:items-end">
+          <div className="lg:col-span-5">
+            <div className="mb-5 flex h-10 w-10 items-center justify-center rounded-sm border border-white/10 bg-white/[0.04] text-brand-blue">
+              <Trophy className="h-5 w-5" />
+            </div>
+            <h2 className="font-bebas text-5xl uppercase italic leading-none tracking-tighter text-white md:text-7xl">
+              Una società,<br />
+              <span className="text-brand-blue">più percorsi.</span>
+            </h2>
           </div>
 
-          {/* Quick Roster Stats Banner */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 pt-12 text-center select-none">
-            <div className="p-5 glass-card transition-expo hover:-translate-y-1 hover:scale-[1.03] hover:rotate-1 rounded-xl shadow-lg">
-              <span className="font-bebas text-5xl md:text-6xl text-brand-blue italic block">200+</span>
-              <span className="font-montserrat text-[10px] text-muted-foreground uppercase tracking-widest block mt-2">Atleti Associati</span>
-            </div>
-            <div className="p-5 glass-card transition-expo hover:-translate-y-1 hover:scale-[1.03] hover:-rotate-1 rounded-xl shadow-lg">
-              <span className="font-bebas text-5xl md:text-6xl text-brand-red italic block">09</span>
-              <span className="font-montserrat text-[10px] text-muted-foreground uppercase tracking-widest block mt-2">Settembre 2009</span>
-            </div>
-            <div className="p-5 glass-card transition-expo hover:-translate-y-1 hover:scale-[1.03] hover:rotate-1 rounded-xl shadow-lg">
-              <span className="font-bebas text-5xl md:text-6xl text-brand-blue block">1ª</span>
-              <span className="font-montserrat text-[10px] text-muted-foreground uppercase tracking-widest block mt-2">Società d&apos;Italia</span>
+          <div className="space-y-5 lg:col-span-7">
+            <p className="max-w-2xl text-base leading-relaxed text-muted-foreground md:text-lg">
+              Agonismo, corsi giovani, attività nelle scuole e community: One Tribe tiene insieme crescita sportiva e cultura del fair play.
+            </p>
+            <div className="grid grid-cols-1 gap-px overflow-hidden rounded-sm border border-white/[0.08] bg-white/[0.08] sm:grid-cols-3">
+              {[
+                ["200+", "Atleti associati"],
+                ["2009", "Inizio del percorso"],
+                ["1ª", "Società d'Italia"]
+              ].map(([value, label]) => (
+                <div key={label} className="bg-[#151C34] p-5">
+                  <span className="block font-bebas text-5xl italic leading-none tracking-tight text-white md:text-6xl">
+                    {value}
+                  </span>
+                  <span className="mt-3 block font-montserrat text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                    {label}
+                  </span>
+                </div>
+              ))}
             </div>
           </div>
         </div>
       </section>
 
-      {/* Floating Gallery Showcase */}
-      <section className="relative w-full h-[95vh] bg-[#1E2543] border-y border-white/5 overflow-hidden flex flex-col justify-center items-center">
+      <section className="relative w-full min-h-[92dvh] bg-[#192039] border-y border-white/[0.08] overflow-hidden flex flex-col justify-center items-center">
         
-        {/* Gallery Titles overlay */}
         <div className="absolute z-10 text-center select-none pointer-events-none px-4">
           <h2 className="font-bebas text-6xl md:text-9xl uppercase italic tracking-tighter text-white/95 leading-none transform -skew-x-12">
             GALLERY <span className="text-brand-blue">ONETRIBE</span>
           </h2>
-          <p className="font-montserrat text-xs text-brand-red uppercase tracking-widest mt-3">
+          <p className="font-montserrat text-xs text-brand-red uppercase tracking-[0.14em] mt-3">
             Momenti catturati all&apos;interno della nostra avventura
           </p>
         </div>
 
-        {/* Parallax Floating Canvas */}
         <Floating sensitivity={-0.85} className="absolute inset-0 w-full h-full z-1 overflow-hidden">
           <FloatingElement depth={0.4} className="top-[15%] left-[8%]">
             <motion.img
               src={exampleImages[0].url}
-              className="w-52 h-36 md:w-64 md:h-48 object-cover rounded-lg border border-white/10 hover:border-brand-blue hover:scale-105 duration-300 cursor-pointer shadow-2xl"
+              alt="Partita One Tribe in azione"
+              className="w-52 h-36 md:w-64 md:h-48 object-cover rounded-sm border border-white/10 hover:border-brand-blue hover:scale-[1.025] duration-300 cursor-pointer shadow-[0_28px_80px_rgba(8,12,28,0.34)]"
               whileHover={{ rotate: -2 }}
             />
           </FloatingElement>
           <FloatingElement depth={0.8} className="top-[8%] left-[40%]">
             <motion.img
               src={exampleImages[1].url}
-              className="w-40 h-40 md:w-56 md:h-56 object-cover rounded-lg border border-white/10 hover:border-brand-blue hover:scale-105 duration-300 cursor-pointer shadow-2xl"
+              alt="Allenamento One Tribe"
+              className="w-40 h-40 md:w-56 md:h-56 object-cover rounded-sm border border-white/10 hover:border-brand-blue hover:scale-[1.025] duration-300 cursor-pointer shadow-[0_28px_80px_rgba(8,12,28,0.34)]"
               whileHover={{ rotate: 3 }}
             />
           </FloatingElement>
           <FloatingElement depth={0.6} className="top-[12%] right-[10%]">
             <motion.img
               src={exampleImages[2].url}
-              className="w-48 h-36 md:w-72 md:h-48 object-cover rounded-lg border border-white/10 hover:border-brand-blue hover:scale-105 duration-300 cursor-pointer shadow-2xl"
+              alt="Atleti One Tribe durante una partita"
+              className="w-48 h-36 md:w-72 md:h-48 object-cover rounded-sm border border-white/10 hover:border-brand-blue hover:scale-[1.025] duration-300 cursor-pointer shadow-[0_28px_80px_rgba(8,12,28,0.34)]"
               whileHover={{ rotate: -1 }}
             />
           </FloatingElement>
           <FloatingElement depth={1.2} className="bottom-[15%] left-[12%]">
             <motion.img
               src={exampleImages[4].url}
-              className="w-44 h-48 md:w-56 md:h-72 object-cover rounded-lg border border-white/10 hover:border-brand-blue hover:scale-105 duration-300 cursor-pointer shadow-2xl"
+              alt="Giocatore One Tribe con disco"
+              className="w-44 h-48 md:w-56 md:h-72 object-cover rounded-sm border border-white/10 hover:border-brand-blue hover:scale-[1.025] duration-300 cursor-pointer shadow-[0_28px_80px_rgba(8,12,28,0.34)]"
               whileHover={{ rotate: 2 }}
             />
           </FloatingElement>
           <FloatingElement depth={0.7} className="bottom-[18%] right-[15%]">
             <motion.img
               src={exampleImages[5].url}
-              className="w-56 h-40 md:w-80 md:h-56 object-cover rounded-lg border border-white/10 hover:border-brand-blue hover:scale-105 duration-300 cursor-pointer shadow-2xl"
+              alt="Squadra One Tribe in campo"
+              className="w-56 h-40 md:w-80 md:h-56 object-cover rounded-sm border border-white/10 hover:border-brand-blue hover:scale-[1.025] duration-300 cursor-pointer shadow-[0_28px_80px_rgba(8,12,28,0.34)]"
               whileHover={{ rotate: -3 }}
             />
           </FloatingElement>
           <FloatingElement depth={0.5} className="bottom-[10%] left-[45%]">
             <motion.img
               src={exampleImages[6].url}
-              className="w-48 h-32 md:w-64 md:h-44 object-cover rounded-lg border border-white/10 hover:border-brand-blue hover:scale-105 duration-300 cursor-pointer shadow-2xl"
+              alt="Scatto di gioco One Tribe"
+              className="w-48 h-32 md:w-64 md:h-44 object-cover rounded-sm border border-white/10 hover:border-brand-blue hover:scale-[1.025] duration-300 cursor-pointer shadow-[0_28px_80px_rgba(8,12,28,0.34)]"
               whileHover={{ rotate: 1 }}
             />
           </FloatingElement>
         </Floating>
       </section>
 
-      {/* Sponsors Section */}
       <section id="sponsor" className="py-28 px-4 md:px-8 bg-brand-navy overflow-hidden select-none">
         <div className="max-w-7xl mx-auto space-y-16">
           
-          {/* Header */}
           <div className="text-center space-y-4">
             <h2 className="font-bebas text-5xl md:text-7xl uppercase italic tracking-tighter text-white transform -skew-x-12">
               CONDIVIDONO I NOSTRI <span className="text-brand-red">VALORI</span>
@@ -898,13 +572,12 @@ export default function Home() {
             <div className="w-16 h-1 bg-brand-blue mx-auto mt-4 transform -skew-x-12" />
           </div>
 
-          {/* Sponsors grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-8 items-center justify-items-center">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 md:gap-5 items-center justify-items-center">
             {sponsors.map((sponsor, idx) => (
               <motion.div
                 key={idx}
-                whileHover={{ scale: 1.05 }}
-                className="group relative flex items-center justify-center p-6 bg-[#1E2543] border border-white/5 hover:border-brand-blue/30 rounded-lg w-full h-32 overflow-hidden duration-300"
+                whileHover={{ y: -4 }}
+                className="group relative flex items-center justify-center p-6 bg-[#192039]/70 border border-white/[0.07] hover:border-brand-blue/[0.24] rounded-sm w-full h-32 overflow-hidden duration-300 shadow-[0_18px_55px_rgba(8,12,28,0.16)]"
               >
                 <Image
                   src={sponsor.url}
@@ -912,7 +585,7 @@ export default function Home() {
                   width={180}
                   height={90}
                   sizes="(min-width: 768px) 12rem, 50vw"
-                  className="max-w-full max-h-full object-contain filter grayscale group-hover:grayscale-0 duration-300 opacity-60 group-hover:opacity-100"
+                  className="max-w-full max-h-full object-contain filter grayscale group-hover:grayscale-0 duration-300 opacity-[0.68] group-hover:opacity-100"
                 />
               </motion.div>
             ))}
@@ -921,11 +594,10 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Safeguarding Section Link */}
       <section className="py-12 px-4 md:px-8 bg-brand-red border-y border-white/10 select-none">
         <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
           <div className="flex items-center gap-3">
-            <Shield className="w-8 h-8 text-white animate-pulse" />
+            <Shield className="w-8 h-8 text-white" />
             <div>
               <h3 className="font-bebas text-2xl md:text-3xl text-white uppercase italic tracking-tight">SAFEGUARDING POLICY</h3>
               <p className="font-sans text-xs text-white/80 mt-0.5">Tutela dei minori e politiche di salvaguardia BUG ASD.</p>
@@ -933,20 +605,18 @@ export default function Home() {
           </div>
           <button
             onClick={() => window.open("/safeguarding-policy", "_blank")}
-            className="group px-6 py-3 border border-white text-white font-montserrat font-bold uppercase tracking-wider text-xs transform -skew-x-12 hover:bg-white hover:text-brand-red duration-300 cursor-pointer"
+            className="group px-5 py-3 rounded-sm border border-white/75 text-white font-montserrat font-semibold uppercase tracking-[0.14em] text-xs hover:bg-white hover:text-brand-red duration-300 cursor-pointer active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/80"
           >
             Visualizza Policy
           </button>
         </div>
       </section>
 
-      {/* Footer */}
       <footer className="bg-brand-navy border-t border-white/5 py-16 px-4 select-none">
         <div className="max-w-7xl mx-auto space-y-12">
           
           <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
             
-            {/* Column 1: Info brand */}
             <div className="md:col-span-5 space-y-4">
               <div className="flex items-center gap-4">
                 <OneTribeLogo className="w-14 h-14" />
@@ -964,7 +634,6 @@ export default function Home() {
               </p>
             </div>
 
-            {/* Column 2: Legal BUG ASD data */}
             <div className="md:col-span-4 space-y-3 font-sans text-xs text-muted-foreground">
               <h5 className="font-montserrat font-bold text-white uppercase tracking-wider text-xs">BUG ASD</h5>
               <p className="flex items-center gap-2">
@@ -981,7 +650,6 @@ export default function Home() {
               </p>
             </div>
 
-            {/* Column 3: Links */}
             <div className="md:col-span-3 space-y-3 font-montserrat text-xs text-muted-foreground uppercase tracking-wider">
               <h5 className="font-montserrat font-bold text-white uppercase tracking-wider text-xs">Documenti</h5>
               <p><a href="/privacy-policy" target="_blank" className="hover:text-brand-blue duration-200">Privacy & Cookie Policy</a></p>
@@ -993,7 +661,6 @@ export default function Home() {
 
           <hr className="border-white/5" />
 
-          {/* Copyright & Disclaimer */}
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-center sm:text-left font-sans text-[10px] text-muted-foreground">
             <div>
               <p>Copyright &copy; {new Date().getFullYear()} BUG ASD. Tutti i diritti riservati.</p>
@@ -1001,7 +668,7 @@ export default function Home() {
             </div>
             <div className="flex items-center gap-1">
               <span>Made with</span>
-              <Heart className="w-3 h-3 text-brand-red fill-brand-red animate-pulse" />
+              <Heart className="w-3 h-3 text-brand-red fill-brand-red" />
               <span>& Spirit of the Game.</span>
             </div>
           </div>

@@ -105,77 +105,70 @@ export default function News() {
   return (
     <div className="min-h-screen bg-brand-navy text-foreground font-sans overflow-x-hidden">
       
-      {/* Sticky Blurred Navbar */}
       <Navbar01 
         logo={<OneTribeLogo className="py-2 h-10 cursor-pointer" onClick={() => window.location.href = "/"} />}
         navigationLinks={navLinks}
         signInText="Accedi a Golee"
-        ctaText="Entra in ONE TRIBE"
+        ctaText="Entra nel club"
         onSignInClick={() => window.open("https://app.golee.it", "_blank")}
         onCtaClick={() => window.location.href = "/contatti"}
-        className="sticky top-0 z-[100] bg-brand-navy/90 backdrop-blur-md border-b border-white/5"
       />
 
-      {/* Header Banner */}
-      <section className="relative py-20 px-4 md:px-8 overflow-hidden bg-gradient-to-b from-[#1E2543] to-brand-navy">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(112,165,237,0.1),transparent_70%)] pointer-events-none" />
+      <section className="relative px-4 pb-20 pt-32 md:px-8 md:pt-36 overflow-hidden bg-[#18203A] border-b border-white/[0.08]">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_72%_18%,rgba(141,179,229,0.13),transparent_50%)] pointer-events-none" />
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="text-center md:text-left space-y-4">
-            <div className="flex items-center justify-center md:justify-start gap-2 px-3 py-1 rounded-full bg-brand-blue/10 border border-brand-blue/30 text-brand-blue text-xs font-semibold uppercase tracking-wider font-montserrat w-max">
+            <div className="flex items-center justify-center md:justify-start gap-2 px-3 py-1 rounded-sm bg-white/[0.045] border border-white/10 text-brand-blue text-xs font-semibold uppercase tracking-[0.14em] font-montserrat w-max">
               <FileText className="w-4 h-4" />
-              Notizie della Tribù
+              Notizie della tribù
             </div>
             <h1 className="font-bebas text-6xl md:text-8xl text-white uppercase italic tracking-tighter transform -skew-x-12 leading-none">
-              NEWS & <span className="text-brand-red">STORIE</span>
+              News <span className="text-brand-red">e storie</span>
             </h1>
-            <p className="font-montserrat text-xs md:text-sm text-muted-foreground uppercase tracking-widest max-w-xl">
-              Rimani sempre aggiornato sugli ultimi campionati, lezioni didattiche, eventi sociali e tornei.
+            <p className="font-sans text-base md:text-lg text-muted-foreground leading-relaxed max-w-2xl">
+              Campionati, attività didattiche, eventi sociali e tornei raccontati con il ritmo del campo.
             </p>
-            <div className="w-16 h-1 bg-brand-blue transform -skew-x-12 hidden md:block" />
           </div>
 
-          {/* CTA Button to publish article */}
           <button
             onClick={() => setShowModal(true)}
-            className="group px-6 py-4 bg-brand-red hover:bg-brand-red/90 text-white font-montserrat font-bold uppercase tracking-wider text-xs transform -skew-x-12 duration-300 flex items-center gap-2 cursor-pointer shadow-lg shadow-brand-red/25 shrink-0"
+            className="group px-5 py-3 rounded-lg bg-brand-red hover:bg-[#B23347] text-white font-montserrat font-semibold uppercase tracking-[0.12em] text-xs duration-300 flex items-center gap-2 cursor-pointer shadow-[0_16px_36px_rgba(162,41,59,0.24)] shrink-0 active:translate-y-px"
           >
             <Plus className="w-4 h-4" />
-            Pubblica un Articolo
+            Pubblica un articolo
           </button>
         </div>
       </section>
 
-      {/* News Grid */}
-      <section className="py-16 px-4 md:px-8 max-w-7xl mx-auto bg-dots-pattern rounded-3xl my-8">
+      <section className="py-16 px-4 md:px-8 max-w-7xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {articles.map((art) => (
             <Link
               key={art.id}
               href={`/news/${art.id}`}
-              className="group glass-card transition-expo hover:scale-[1.02] rounded-xl overflow-hidden flex flex-col justify-between cursor-pointer shadow-md hover:shadow-xl"
+              className="group bg-[#192039]/80 border border-white/[0.07] transition-expo hover:-translate-y-1 hover:border-brand-blue/30 rounded-xl overflow-hidden flex flex-col justify-between cursor-pointer shadow-[0_24px_70px_rgba(8,12,28,0.20)]"
             >
               <div>
-                {/* Image block */}
-                <div className="relative h-48 overflow-hidden bg-brand-navy p-1">
+                <div className="relative h-52 overflow-hidden bg-brand-navy">
                   <Image
                     src={art.image}
                     alt={art.title}
                     fill
                     sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
-                    className="object-cover rounded-t-lg group-hover:scale-105 duration-300"
+                    className="object-cover group-hover:scale-[1.035] duration-700"
                   />
-                  <div className="absolute top-3 left-3 px-2 py-1 rounded bg-brand-red/90 text-[9px] font-bold uppercase tracking-wider font-montserrat text-white shadow-md">
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#11172C]/45 via-transparent to-transparent" />
+                  <div className="absolute top-3 left-3 px-2.5 py-1 rounded-sm bg-brand-red/90 text-[9px] font-semibold uppercase tracking-[0.12em] font-montserrat text-white shadow-md">
                     {art.category}
                   </div>
                 </div>
 
-                {/* Info block */}
                 <div className="p-6 space-y-3">
                   <div className="flex items-center gap-4 text-[10px] text-muted-foreground font-sans uppercase">
                     <span className="flex items-center gap-1"><Calendar className="w-3.5 h-3.5" /> {art.date}</span>
                     <span className="flex items-center gap-1"><User className="w-3.5 h-3.5" /> {art.author.split(" ")[0]}</span>
                   </div>
-                  <h3 className="font-montserrat font-bold text-white text-sm leading-snug group-hover:text-brand-blue duration-200">
+                  <h3 className="font-montserrat font-semibold text-white text-base leading-snug text-pretty group-hover:text-brand-blue duration-200">
                     {art.title}
                   </h3>
                   <p className="font-sans text-xs text-muted-foreground leading-relaxed">
@@ -186,7 +179,7 @@ export default function News() {
                   {art.tags && art.tags.length > 0 && (
                     <div className="flex flex-wrap gap-1.5 pt-1">
                       {art.tags.map((tag, tIdx) => (
-                        <span key={tIdx} className="px-2 py-0.5 rounded bg-brand-navy border border-brand-blue/20 text-[9px] text-brand-blue font-semibold uppercase tracking-wider">
+                        <span key={tIdx} className="px-2 py-0.5 rounded-sm bg-brand-navy border border-brand-blue/20 text-[9px] text-brand-blue font-semibold uppercase tracking-[0.1em]">
                           #{tag}
                         </span>
                       ))}
@@ -195,7 +188,6 @@ export default function News() {
                 </div>
               </div>
 
-              {/* Bottom footer bar */}
               <div className="px-6 py-4 bg-brand-navy/30 border-t border-white/5 flex items-center gap-1 text-[10px] text-brand-blue uppercase tracking-wider font-montserrat font-semibold group-hover:text-brand-red duration-200">
                 <span>Leggi di più</span>
                 <Clock className="w-3.5 h-3.5" />
@@ -212,13 +204,13 @@ export default function News() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-brand-navy/95 backdrop-blur-sm"
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-brand-navy/95 backdrop-blur-sm"
           >
             <motion.div
               initial={{ scale: 0.95, y: 15 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.95, y: -15 }}
-              className="bg-[#1E2543] border border-white/10 rounded-2xl max-w-xl w-full max-h-[90vh] overflow-y-auto p-6 md:p-8 shadow-2xl space-y-6 relative"
+              className="bg-[#192039] border border-white/10 rounded-2xl max-w-xl w-full max-h-[90vh] overflow-y-auto p-6 md:p-8 shadow-[0_28px_90px_rgba(8,12,28,0.42)] space-y-6 relative"
             >
               {/* Close Button */}
               <button
@@ -239,7 +231,7 @@ export default function News() {
               {formSubmitted ? (
                 <div className="p-8 bg-brand-navy border border-brand-blue/30 rounded-xl text-center space-y-4">
                   <CheckCircle className="w-12 h-12 text-brand-blue mx-auto animate-bounce" />
-                  <h4 className="font-bebas text-2xl text-white uppercase italic">Articolo Pubblicato!</h4>
+                  <h4 className="font-bebas text-2xl text-white uppercase italic">Articolo pubblicato</h4>
                   <p className="font-sans text-xs text-muted-foreground">
                     La notizia è stata salvata con successo ed è ora consultabile nella bacheca di One Tribe.
                   </p>
@@ -335,7 +327,7 @@ export default function News() {
 
                   <button
                     type="submit"
-                    className="w-full py-4 bg-brand-red text-white font-bold uppercase tracking-wider text-xs transform -skew-x-6 hover:scale-[1.01] duration-300 flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-brand-red/20"
+                    className="w-full py-4 rounded-lg bg-brand-red text-white font-semibold uppercase tracking-[0.12em] text-xs hover:bg-[#B23347] duration-300 flex items-center justify-center gap-2 cursor-pointer shadow-[0_16px_36px_rgba(162,41,59,0.24)] active:translate-y-px"
                   >
                     Pubblica Notizia
                     <Send className="w-4 h-4" />
@@ -357,7 +349,7 @@ export default function News() {
               ONE TRIBE
             </h4>
             <p className="font-sans text-[10px] text-muted-foreground uppercase tracking-widest mt-1">
-              Bologna Ultimate Frisbee · BUG ASD
+              Bologna Ultimate Frisbee / BUG ASD
             </p>
           </div>
           <div className="flex gap-6 font-montserrat text-xs text-muted-foreground uppercase tracking-wider">

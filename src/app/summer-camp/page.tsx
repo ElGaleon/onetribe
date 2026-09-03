@@ -77,34 +77,26 @@ export default function SummerCamp() {
   }
 
   return (
-    <div className="min-h-screen bg-brand-navy bg-dots-pattern text-foreground font-sans overflow-x-hidden relative">
-      {/* Background watermark */}
-      <div className="absolute top-10 left-10 font-bebas text-[20vw] text-outline opacity-[0.02] tracking-tighter uppercase italic select-none pointer-events-none transform -skew-x-12">
-        CAMP
-      </div>
-      
-      {/* Sticky Blurred Navbar */}
+    <div className="min-h-screen bg-brand-navy text-foreground font-sans overflow-x-hidden relative">
       <Navbar01 
         logo={<OneTribeLogo className="py-2 h-10 cursor-pointer" onClick={() => window.location.href = "/"} />}
         navigationLinks={navLinks}
         signInText="Accedi a Golee"
-        ctaText="Entra in ONE TRIBE"
+        ctaText="Entra nel club"
         onSignInClick={() => window.open("https://app.golee.it", "_blank")}
         onCtaClick={() => window.location.href = "/contatti"}
-        className="sticky top-0 z-[100] bg-brand-navy/90 backdrop-blur-md border-b border-white/5"
       />
 
-      {/* Header Banner */}
-      <section className="relative py-20 px-4 md:px-8 overflow-hidden bg-gradient-to-b from-[#1E2543] to-brand-navy bg-grid-pattern border-b border-white/5">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(112,165,237,0.1),transparent_70%)] pointer-events-none" />
-        <div className="max-w-7xl mx-auto text-center space-y-4 relative z-10">
+      <section className="relative px-4 pb-20 pt-32 md:px-8 md:pt-36 overflow-hidden bg-[#18203A] border-b border-white/[0.08]">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_72%_18%,rgba(162,41,59,0.16),transparent_50%)] pointer-events-none" />
+        <div className="max-w-4xl mx-auto text-center space-y-5 relative z-10">
           <motion.div 
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="flex items-center justify-center gap-2 px-3 py-1 rounded-full bg-brand-blue/10 border border-brand-blue/30 text-brand-blue text-xs font-semibold uppercase tracking-wider font-montserrat w-max mx-auto"
+            className="flex items-center justify-center gap-2 px-3 py-1 rounded-sm bg-white/[0.045] border border-white/10 text-brand-blue text-xs font-semibold uppercase tracking-[0.14em] font-montserrat w-max mx-auto"
           >
-            <Sun className="w-4 h-4 text-amber-400 animate-spin" />
+            <Sun className="w-4 h-4 text-brand-blue" />
             Camp Estivo 2026
           </motion.div>
           <motion.h1 
@@ -113,22 +105,16 @@ export default function SummerCamp() {
             transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
             className="font-bebas text-6xl md:text-8xl text-white uppercase italic tracking-tighter transform -skew-x-12 leading-none"
           >
-            SUMMER <span className="text-brand-red">CAMP</span>
+            Summer <span className="text-brand-red">camp</span>
           </motion.h1>
           <motion.p 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.2, duration: 0.5 }}
-            className="font-montserrat text-xs md:text-sm text-muted-foreground uppercase tracking-widest max-w-xl mx-auto"
+            className="font-sans text-base md:text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto"
           >
-            Vivi un&apos;estate all&apos;insegna dello sport, dell&apos;amicizia e dei valori dello Spirit of the Game al Centro Barca.
+            Sport, amicizia e Spirit of the Game al Centro Barca, con giornate pensate per ragazzi e ragazze.
           </motion.p>
-          <motion.div 
-            initial={{ width: 0 }}
-            animate={{ width: 64 }}
-            transition={{ delay: 0.3, duration: 0.5 }}
-            className="h-1 bg-brand-blue mx-auto mt-6 transform -skew-x-12" 
-          />
         </div>
       </section>
 
@@ -294,7 +280,7 @@ export default function SummerCamp() {
               ONE TRIBE
             </h4>
             <p className="font-sans text-[10px] text-muted-foreground uppercase tracking-widest mt-1">
-              Bologna Ultimate Frisbee · BUG ASD
+              Bologna Ultimate Frisbee / BUG ASD
             </p>
           </div>
           <div className="flex gap-6 font-montserrat text-xs text-muted-foreground uppercase tracking-wider">

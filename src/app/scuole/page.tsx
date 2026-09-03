@@ -67,38 +67,29 @@ export default function Scuole() {
   }
 
   return (
-    <div className="min-h-screen bg-brand-navy bg-dots-pattern text-foreground font-sans overflow-x-hidden relative">
-      {/* Background watermark */}
-      <div className="absolute top-10 left-10 font-bebas text-[20vw] text-outline opacity-[0.02] tracking-tighter uppercase italic select-none pointer-events-none transform -skew-x-12">
-        SCHOOLS
-      </div>
-
-      {/* Sticky Blurred Navbar */}
+    <div className="min-h-screen bg-brand-navy text-foreground font-sans overflow-x-hidden relative">
       <Navbar01 
         logo={<OneTribeLogo className="py-2 h-10 cursor-pointer" onClick={() => window.location.href = "/"} />}
         navigationLinks={navLinks}
         signInText="Accedi a Golee"
-        ctaText="Entra in ONE TRIBE"
+        ctaText="Entra nel club"
         onSignInClick={() => window.open("https://app.golee.it", "_blank")}
         onCtaClick={() => window.location.href = "/contatti"}
-        className="sticky top-0 z-[100] bg-brand-navy/90 backdrop-blur-md border-b border-white/5"
       />
 
-      {/* Header Banner */}
-      <section className="relative py-20 px-4 md:px-8 overflow-hidden bg-gradient-to-b from-[#1E2543] to-brand-navy bg-grid-pattern border-b border-white/5">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(112,165,237,0.1),transparent_70%)] pointer-events-none" />
-        <div className="max-w-7xl mx-auto text-center space-y-4 relative z-10">
-          <div className="flex items-center justify-center gap-2 px-3 py-1 rounded-full bg-brand-blue/10 border border-brand-blue/30 text-brand-blue text-xs font-semibold uppercase tracking-wider font-montserrat w-max mx-auto">
+      <section className="relative px-4 pb-20 pt-32 md:px-8 md:pt-36 overflow-hidden bg-[#18203A] border-b border-white/[0.08]">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_18%,rgba(141,179,229,0.13),transparent_50%)] pointer-events-none" />
+        <div className="max-w-4xl mx-auto text-center space-y-5 relative z-10">
+          <div className="flex items-center justify-center gap-2 px-3 py-1 rounded-sm bg-white/[0.045] border border-white/10 text-brand-blue text-xs font-semibold uppercase tracking-[0.14em] font-montserrat w-max mx-auto">
             <GraduationCap className="w-4 h-4" />
-            Ultimate nelle Scuole
+            Ultimate nelle scuole
           </div>
           <h1 className="font-bebas text-6xl md:text-8xl text-white uppercase italic tracking-tighter transform -skew-x-12 leading-none">
-            PROGETTO <span className="text-brand-red">SCUOLE</span>
+            Progetto <span className="text-brand-red">scuole</span>
           </h1>
-          <p className="font-montserrat text-xs md:text-sm text-muted-foreground uppercase tracking-widest max-w-xl mx-auto">
-            Promuoviamo l&apos;Ultimate Frisbee e i suoi valori educativi negli istituti scolastici di Bologna e provincia.
+          <p className="font-sans text-base md:text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto">
+            Portiamo l&apos;Ultimate Frisbee negli istituti di Bologna con moduli didattici, tornei e una cultura del fair play concreta.
           </p>
-          <div className="w-16 h-1 bg-brand-blue mx-auto mt-6 transform -skew-x-12" />
         </div>
       </section>
 
@@ -125,7 +116,7 @@ export default function Scuole() {
         </div>
 
         {/* Right Column: Mission & Values */}
-        <div className="lg:col-span-5 p-6 glass-card rounded-xl space-y-6 shadow-xl relative z-10">
+        <div className="lg:col-span-5 p-6 glass-card rounded-xl space-y-6 relative z-10">
           <h3 className="font-montserrat font-bold text-white text-sm uppercase tracking-wider flex items-center gap-2">
             <BookOpen className="w-5 h-5 text-brand-blue" /> I Nostri Pilastri Educativi
           </h3>
@@ -338,7 +329,7 @@ export default function Scuole() {
               ONE TRIBE
             </h4>
             <p className="font-sans text-[10px] text-muted-foreground uppercase tracking-widest mt-1">
-              Bologna Ultimate Frisbee · BUG ASD
+              Bologna Ultimate Frisbee / BUG ASD
             </p>
           </div>
           <div className="flex gap-6 font-montserrat text-xs text-muted-foreground uppercase tracking-wider">

@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { useEffect, useState, useRef } from 'react';
 import {
@@ -17,33 +18,6 @@ import {
 import { cn } from '@/lib/utils';
 import OneTribeLogo from "@/app/svg/one-tribe-logo";
 
-// Simple logo component for the navbar
-const Logo = (props: React.SVGAttributes<SVGElement>) => {
-  return (
-    <svg width='1em' height='1em' viewBox='0 0 324 323' fill='currentColor' xmlns='http://www.w3.org/2000/svg' {...props}>
-      <rect
-        x='88.1023'
-        y='144.792'
-        width='151.802'
-        height='36.5788'
-        rx='18.2894'
-        transform='rotate(-38.5799 88.1023 144.792)'
-        fill='currentColor'
-      />
-      <rect
-        x='85.3459'
-        y='244.537'
-        width='151.802'
-        height='36.5788'
-        rx='18.2894'
-        transform='rotate(-38.5799 85.3459 244.537)'
-        fill='currentColor'
-      />
-    </svg>
-  );
-};
-
-// Hamburger icon component
 const HamburgerIcon = ({ className, ...props }: React.SVGAttributes<SVGElement>) => (
   <svg
     className={cn('pointer-events-none', className)}
@@ -119,7 +93,20 @@ export const Navbar01 = React.forwardRef<HTMLElement, Navbar01Props>(
     ref
   ) => {
     const [isMobile, setIsMobile] = useState(false);
+    const [isScrolled, setIsScrolled] = useState(false);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
     const containerRef = useRef<HTMLElement>(null);
+    const pathname = usePathname();
+    const resolvedNavigationLinks = React.useMemo(() => {
+      const links = navigationLinks.some((link) => link.href === '/')
+        ? navigationLinks
+        : [{ href: '/', label: 'Home' }, ...navigationLinks];
+
+      return links.map((link) => ({
+        ...link,
+        active: link.active || pathname === link.href,
+      }));
+    }, [navigationLinks, pathname]);
 
     const handleSignIn = (e: React.MouseEvent) => {
       e.preventDefault();
@@ -139,12 +126,21 @@ export const Navbar01 = React.forwardRef<HTMLElement, Navbar01Props>(
       window.location.href = ctaHref;
     };
 
+    const handleMobileSignIn = (e: React.MouseEvent) => {
+      setIsMenuOpen(false);
+      handleSignIn(e);
+    };
+
+    const handleMobileCta = (e: React.MouseEvent) => {
+      setIsMenuOpen(false);
+      handleCta(e);
+    };
+
     useEffect(() => {
-        // Responsive navigation menu
       const checkWidth = () => {
         if (containerRef.current) {
           const width = containerRef.current.offsetWidth;
-          setIsMobile(width < 768); // 768px is md breakpoint
+          setIsMobile(width < 1060);
         }
       };
 
@@ -160,7 +156,19 @@ export const Navbar01 = React.forwardRef<HTMLElement, Navbar01Props>(
       };
     }, []);
 
-    // Combine refs
+    useEffect(() => {
+      const updateScrollState = () => {
+        setIsScrolled(window.scrollY > 12);
+      };
+
+      updateScrollState();
+      window.addEventListener('scroll', updateScrollState, { passive: true });
+
+      return () => {
+        window.removeEventListener('scroll', updateScrollState);
+      };
+    }, []);
+
     const combinedRef = React.useCallback((node: HTMLElement | null) => {
       containerRef.current = node;
       if (typeof ref === 'function') {
@@ -174,35 +182,37 @@ export const Navbar01 = React.forwardRef<HTMLElement, Navbar01Props>(
       <header
         ref={combinedRef}
         className={cn(
-          'sticky top-0 z-[100] w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-3 md:px-6 [&_*]:no-underline',
+          'fixed left-0 right-0 top-0 z-50 w-full px-3 pt-3 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] md:px-6 md:pt-4 [&_*]:no-underline',
           className
         )}
         {...props}
       >
-        <div className="container mx-auto flex h-16 max-w-screen-2xl items-center justify-between gap-3">
-          {/* Left side */}
-          <div className="flex min-w-0 items-center gap-3 md:gap-6">
-            {/* Main nav */}
+        <div className={cn(
+          "relative mx-auto flex w-full max-w-6xl items-center justify-between gap-3 rounded-xl border px-3 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] md:px-4",
+          isScrolled
+            ? "h-14 border-white/[0.12] bg-[#151b31]/[0.72] shadow-[0_18px_70px_rgba(8,12,28,0.30)] backdrop-blur-xl supports-[backdrop-filter]:bg-[#151b31]/[0.62]"
+            : "h-16 border-white/[0.08] bg-[#11172c]/[0.16] shadow-none backdrop-blur-[2px]"
+        )}>
+          <div className="flex min-w-0 items-center gap-3 md:gap-5">
             <Link 
               href={logoHref}
-              className="flex shrink-0 items-center space-x-2 text-primary hover:text-primary/90 transition-colors cursor-pointer"
+              className="flex shrink-0 items-center space-x-2 rounded-lg text-primary hover:text-primary/90 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue/80"
             >
-              <div className="text-2xl">
+              <div className="[&_svg]:h-9">
                 {logo}
               </div>
             </Link>
-            {/* Navigation menu */}
             {!isMobile && (
               <NavigationMenu className="flex">
                 <NavigationMenuList className="gap-1">
-                  {navigationLinks.map((link, index) => (
+                  {resolvedNavigationLinks.map((link, index) => (
                     <NavigationMenuItem key={index}>
                       <Link
                         href={link.href}
                         className={cn(
-                          "group inline-flex h-9 w-max items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 cursor-pointer no-underline",
-                          link.active 
-                            ? "bg-accent text-accent-foreground" 
+                          "group inline-flex h-9 w-max items-center justify-center rounded-lg px-3 py-2 text-[13px] font-semibold tracking-[0.01em] transition-all duration-200 hover:bg-white/[0.07] hover:text-white focus:bg-white/[0.075] focus:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue/75 disabled:pointer-events-none disabled:opacity-50 cursor-pointer no-underline",
+                          link.active
+                            ? "bg-white/[0.09] text-white"
                             : "text-foreground/80 hover:text-foreground"
                         )}
                       >
@@ -214,20 +224,19 @@ export const Navbar01 = React.forwardRef<HTMLElement, Navbar01Props>(
               </NavigationMenu>
             )}
           </div>
-          {/* Right side */}
           {!isMobile && (
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <Button
               variant="ghost"
               size="sm"
-              className="text-sm font-medium hover:bg-accent hover:text-accent-foreground"
+              className="h-9 rounded-lg px-3 text-[13px] font-semibold text-white/[0.74] hover:bg-white/[0.07] hover:text-white active:translate-y-px"
               onClick={handleSignIn}
             >
               {signInText}
             </Button>
             <Button
               size="sm"
-              className="text-sm font-medium px-4 h-9 rounded-md shadow-sm"
+              className="h-9 rounded-lg px-4 text-[13px] font-semibold bg-brand-red text-white hover:bg-[#B23347] shadow-[0_12px_28px_rgba(162,41,59,0.24)] active:translate-y-px"
               onClick={handleCta}
             >
               {ctaText}
@@ -236,50 +245,57 @@ export const Navbar01 = React.forwardRef<HTMLElement, Navbar01Props>(
           )}
 
           {isMobile && (
-            <Popover>
+            <Popover open={isMenuOpen} onOpenChange={setIsMenuOpen}>
               <PopoverTrigger asChild>
                 <Button
-                  className="group h-10 w-10 shrink-0 hover:bg-accent hover:text-accent-foreground"
+                  className="group h-10 w-10 shrink-0 rounded-lg hover:bg-white/[0.07] hover:text-white"
                   variant="ghost"
                   size="icon"
-                  aria-label="Apri menu"
+                  aria-label={isMenuOpen ? 'Chiudi menu' : 'Apri menu'}
                 >
                   <HamburgerIcon className="h-5 w-5" />
                 </Button>
               </PopoverTrigger>
-              <PopoverContent align="end" sideOffset={10} className="w-[min(20rem,calc(100vw-1.5rem))] border-white/10 bg-brand-navy/98 p-3 text-white shadow-2xl">
+              <PopoverContent align="end" sideOffset={12} className="w-[calc(100vw-1.5rem)] max-w-[28rem] overflow-hidden rounded-xl border-white/[0.12] bg-[#151b31]/[0.96] p-0 text-white shadow-[0_28px_90px_rgba(8,12,28,0.46)] backdrop-blur-xl">
+                <div className="border-b border-white/10 px-4 py-3">
+                  <p className="font-montserrat text-[10px] font-semibold uppercase tracking-[0.16em] text-brand-blue">
+                    Navigazione
+                  </p>
+                </div>
                 <NavigationMenu className="max-w-none">
-                  <NavigationMenuList className="flex-col items-stretch gap-1">
-                    {navigationLinks.map((link, index) => (
+                  <NavigationMenuList className="flex-col items-stretch gap-0 divide-y divide-white/[0.07]">
+                    {resolvedNavigationLinks.map((link, index) => (
                       <NavigationMenuItem key={index} className="w-full">
                         <Link
                           href={link.href}
+                          onClick={() => setIsMenuOpen(false)}
                           className={cn(
-                            "flex w-full items-center rounded-md px-3 py-3 text-sm font-semibold transition-colors hover:bg-accent hover:text-accent-foreground cursor-pointer no-underline",
-                            link.active 
-                              ? "bg-accent text-accent-foreground" 
+                            "flex min-h-12 w-full items-center justify-between px-4 text-sm font-semibold transition-colors hover:bg-white/[0.07] hover:text-white cursor-pointer no-underline",
+                            link.active
+                              ? "bg-white/[0.08] text-white"
                               : "text-foreground/85 hover:text-foreground"
                           )}
                         >
-                          {link.label}
+                          <span>{link.label}</span>
+                          {link.active && <span className="h-1.5 w-1.5 rounded-full bg-brand-blue" />}
                         </Link>
                       </NavigationMenuItem>
                     ))}
                   </NavigationMenuList>
                 </NavigationMenu>
-                <div className="mt-3 grid grid-cols-1 gap-2 border-t border-white/10 pt-3">
+                <div className="grid gap-2 border-t border-white/10 bg-[#10172D]/70 p-3">
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="h-10 justify-start text-sm font-semibold hover:bg-accent hover:text-accent-foreground"
-                    onClick={handleSignIn}
+                    className="h-10 justify-center rounded-lg px-3 text-[13px] font-semibold text-white/[0.76] hover:bg-white/[0.07] hover:text-white"
+                    onClick={handleMobileSignIn}
                   >
                     {signInText}
                   </Button>
                   <Button
                     size="sm"
-                    className="h-10 justify-start rounded-md px-4 text-sm font-semibold shadow-sm"
-                    onClick={handleCta}
+                    className="h-11 justify-center rounded-lg px-3 text-[13px] font-semibold bg-brand-red text-white hover:bg-[#B23347] shadow-[0_12px_28px_rgba(162,41,59,0.24)]"
+                    onClick={handleMobileCta}
                   >
                     {ctaText}
                   </Button>
@@ -295,4 +311,4 @@ export const Navbar01 = React.forwardRef<HTMLElement, Navbar01Props>(
 
 Navbar01.displayName = 'Navbar01';
 
-export { Logo, HamburgerIcon };
+export { HamburgerIcon };

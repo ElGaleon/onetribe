@@ -67,10 +67,9 @@ export default function BlogPostDetail() {
           logo={<OneTribeLogo className="py-2 h-10 cursor-pointer" onClick={() => window.location.href = "/"} />}
           navigationLinks={navLinks}
           signInText="Accedi a Golee"
-          ctaText="Entra in ONE TRIBE"
+          ctaText="Entra nel club"
           onSignInClick={() => window.open("https://app.golee.it", "_blank")}
           onCtaClick={() => window.location.href = "/contatti"}
-          className="sticky top-0 z-[100] bg-brand-navy/90 backdrop-blur-md border-b border-white/5"
         />
         <div className="max-w-7xl mx-auto py-24 text-center space-y-6 px-4">
           <h1 className="font-bebas text-5xl text-white uppercase italic tracking-tighter transform -skew-x-12">
@@ -91,7 +90,7 @@ export default function BlogPostDetail() {
             <div>
               <h4 className="font-bebas text-2xl text-white tracking-tighter uppercase italic leading-none">ONE TRIBE</h4>
               <p className="font-sans text-[10px] text-muted-foreground uppercase tracking-widest mt-1">
-                Bologna Ultimate Frisbee · BUG ASD
+                Bologna Ultimate Frisbee / BUG ASD
               </p>
             </div>
             <div className="font-sans text-[10px] text-muted-foreground">
@@ -119,25 +118,18 @@ export default function BlogPostDetail() {
   const shareText = `Leggi l'articolo: "${article.title}" su One Tribe Ultimate`
 
   return (
-    <div className="min-h-screen bg-brand-navy bg-dots-pattern text-foreground font-sans overflow-x-hidden relative">
-      {/* Background watermark */}
-      <div className="absolute top-20 right-10 font-bebas text-[22vw] text-outline opacity-[0.02] tracking-tighter uppercase italic select-none pointer-events-none transform -skew-x-12">
-        READ
-      </div>
-      
-      {/* Sticky Blurred Navbar */}
+    <div className="min-h-screen bg-brand-navy text-foreground font-sans overflow-x-hidden relative">
       <Navbar01 
         logo={<OneTribeLogo className="py-2 h-10 cursor-pointer" onClick={() => window.location.href = "/"} />}
         navigationLinks={navLinks}
         signInText="Accedi a Golee"
-        ctaText="Entra in ONE TRIBE"
+        ctaText="Entra nel club"
         onSignInClick={() => window.open("https://app.golee.it", "_blank")}
         onCtaClick={() => window.location.href = "/contatti"}
-        className="sticky top-0 z-[100] bg-brand-navy/90 backdrop-blur-md border-b border-white/5"
       />
 
       {/* Header Back CTA */}
-      <div className="max-w-4xl mx-auto px-4 md:px-6 pt-10 pb-4 relative z-10">
+      <div className="max-w-4xl mx-auto px-4 md:px-6 pt-32 pb-4 relative z-10">
         <Link 
           href="/news"
           className="inline-flex items-center gap-2 text-xs font-montserrat uppercase tracking-wider font-bold text-brand-blue hover:text-brand-red transition-expo duration-200"
@@ -150,15 +142,15 @@ export default function BlogPostDetail() {
       <main className="max-w-4xl mx-auto px-4 md:px-6 pb-24 space-y-10 relative z-10">
         
         {/* Cover Photo */}
-        <div className="relative h-64 md:h-120 w-full overflow-hidden rounded-2xl border border-white/5 bg-[#1E2543] p-1.5 shadow-2xl">
+        <div className="relative h-64 md:h-120 w-full overflow-hidden rounded-2xl border border-white/[0.08] bg-[#192039] shadow-[0_28px_90px_rgba(8,12,28,0.32)]">
           <Image
             src={article.image}
             alt={article.title}
             fill
             sizes="(min-width: 768px) 56rem, 100vw"
-            className="object-cover rounded-xl"
+            className="object-cover"
           />
-          <div className="absolute top-6 left-6 px-3 py-1.5 rounded bg-brand-red/90 text-xs font-bold uppercase tracking-wider font-montserrat text-white shadow-lg">
+          <div className="absolute top-6 left-6 px-3 py-1.5 rounded-sm bg-brand-red/90 text-xs font-semibold uppercase tracking-[0.14em] font-montserrat text-white shadow-lg">
             {article.category}
           </div>
         </div>
@@ -174,7 +166,7 @@ export default function BlogPostDetail() {
             </span>
           </div>
 
-          <h1 className="font-bebas text-5xl md:text-7xl text-white uppercase italic tracking-tighter transform -skew-x-12 leading-tight">
+          <h1 className="font-bebas text-5xl md:text-7xl text-white uppercase italic tracking-tighter transform -skew-x-12 leading-tight text-balance">
             {article.title}
           </h1>
 
@@ -187,7 +179,7 @@ export default function BlogPostDetail() {
               {article.tags.map((tag, idx) => (
                 <span 
                   key={idx}
-                  className="px-3 py-1 rounded bg-brand-blue/10 border border-brand-blue/30 text-[10px] text-brand-blue font-bold uppercase tracking-wider hover:bg-brand-blue/20 duration-200"
+                  className="px-3 py-1 rounded-sm bg-brand-blue/10 border border-brand-blue/30 text-[10px] text-brand-blue font-semibold uppercase tracking-[0.12em] hover:bg-brand-blue/20 duration-200"
                 >
                   #{tag}
                 </span>
@@ -271,8 +263,8 @@ export default function BlogPostDetail() {
             </button>
             
             {copied && (
-              <span className="font-montserrat text-[10px] text-brand-blue font-bold uppercase tracking-wider self-center ml-1 animate-pulse">
-                Link Copiato!
+              <span className="font-montserrat text-[10px] text-brand-blue font-semibold uppercase tracking-wider self-center ml-1">
+                Link copiato
               </span>
             )}
           </div>
@@ -317,7 +309,7 @@ export default function BlogPostDetail() {
               ONE TRIBE
             </h4>
             <p className="font-sans text-[10px] text-muted-foreground uppercase tracking-widest mt-1">
-              Bologna Ultimate Frisbee · BUG ASD
+              Bologna Ultimate Frisbee / BUG ASD
             </p>
           </div>
           <div className="flex gap-6 font-montserrat text-xs text-muted-foreground uppercase tracking-wider">

@@ -54,7 +54,7 @@ export default function SociPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-brand-navy bg-dots-pattern text-foreground font-sans overflow-x-hidden">
+    <div className="min-h-screen bg-brand-navy text-foreground font-sans overflow-x-hidden">
       <Navbar01
         logo={<OneTribeLogo className="py-2 h-10 cursor-pointer" />}
         navigationLinks={navLinks}
@@ -62,14 +62,11 @@ export default function SociPage() {
         ctaText="Contatti"
         onSignInClick={() => window.open("https://app.golee.it", "_blank")}
         onCtaClick={() => window.location.href = "/contatti"}
-        className="sticky top-0 z-[100] bg-brand-navy/90 backdrop-blur-md border-b border-white/5"
       />
 
       <main>
-        <section className="relative px-4 md:px-8 py-16 md:py-20 bg-gradient-to-b from-[#1E2543] to-brand-navy border-b border-white/5 overflow-hidden">
-          <div className="absolute bottom-0 right-4 font-bebas text-[22vw] text-outline opacity-[0.04] uppercase italic tracking-tighter select-none pointer-events-none">
-            SOCI
-          </div>
+        <section className="relative px-4 md:px-8 pb-20 pt-32 md:pt-36 bg-[#18203A] border-b border-white/[0.08] overflow-hidden">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_78%_20%,rgba(141,179,229,0.13),transparent_52%)] pointer-events-none" />
           <div className="max-w-7xl mx-auto relative z-10">
             <Link href="/" className="inline-flex items-center gap-2 text-xs font-montserrat font-bold uppercase tracking-widest text-brand-blue hover:text-white duration-200 mb-10">
               <ArrowLeft className="w-4 h-4" />
@@ -78,15 +75,15 @@ export default function SociPage() {
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-end">
               <div className="lg:col-span-8">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-red/10 border border-brand-red/30 text-brand-blue text-xs font-semibold uppercase tracking-wider font-montserrat mb-5">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-sm bg-white/[0.045] border border-white/10 text-brand-blue text-xs font-semibold uppercase tracking-[0.14em] font-montserrat mb-5">
                   <Users className="w-4 h-4 text-brand-red" />
                   Vendita riservata ai soci
                 </div>
                 <h1 className="font-bebas text-6xl md:text-8xl text-white uppercase italic tracking-tighter transform -skew-x-12 leading-none">
-                  DIVISE & <span className="text-brand-blue">DISCHI</span>
+                  Divise <span className="text-brand-blue">e dischi</span>
                 </h1>
               </div>
-              <p className="lg:col-span-4 font-montserrat text-xs md:text-sm text-muted-foreground uppercase tracking-widest leading-relaxed">
+              <p className="lg:col-span-4 font-sans text-base text-muted-foreground leading-relaxed">
                 Catalogo in sola visualizzazione dei materiali disponibili per i tesserati One Tribe. Per disponibilita, taglie e ritiro passa dalla segreteria o dai referenti di squadra.
               </p>
             </div>
@@ -98,22 +95,22 @@ export default function SociPage() {
             {memberProducts.map((product) => {
               const Icon = product.type === "Disco" ? Disc3 : Shirt
               return (
-                <article key={product.name} className="group bg-[#1E2543] border border-white/5 hover:border-brand-blue/35 overflow-hidden rounded-lg shadow-2xl duration-300">
+                <article key={product.name} className="group bg-[#192039]/80 border border-white/[0.07] hover:border-brand-blue/35 overflow-hidden rounded-xl shadow-[0_24px_70px_rgba(8,12,28,0.22)] duration-300">
                   <div className="relative aspect-[4/5] overflow-hidden bg-brand-navy">
                     <Image
                       src={product.image}
                       alt={product.name}
                       fill
                       sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
-                      className="object-cover group-hover:scale-105 duration-700"
+                      className="object-cover group-hover:scale-[1.035] duration-700"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-brand-navy via-transparent to-transparent opacity-85" />
-                    <div className="absolute top-3 left-3 flex items-center gap-2 px-3 py-1 bg-brand-navy/80 border border-white/10 backdrop-blur-sm">
+                    <div className="absolute inset-0 bg-gradient-to-t from-brand-navy via-transparent to-transparent opacity-[0.85]" />
+                    <div className="absolute top-3 left-3 flex items-center gap-2 rounded-sm px-3 py-1 bg-brand-navy/80 border border-white/10 backdrop-blur-sm">
                       <Icon className="w-4 h-4 text-brand-blue" />
                       <span className="font-montserrat text-[10px] font-bold uppercase tracking-widest text-white">{product.type}</span>
                     </div>
                     <div className="absolute bottom-4 left-4 right-4">
-                      <span className="inline-flex items-center gap-2 px-3 py-1 bg-brand-red text-white font-montserrat text-[10px] font-bold uppercase tracking-widest">
+                      <span className="inline-flex items-center gap-2 rounded-sm px-3 py-1 bg-brand-red text-white font-montserrat text-[10px] font-semibold uppercase tracking-[0.14em]">
                         <Eye className="w-3.5 h-3.5" />
                         {product.price}
                       </span>
@@ -121,7 +118,7 @@ export default function SociPage() {
                   </div>
 
                   <div className="p-5 space-y-4">
-                    <h2 className="font-montserrat text-lg font-black uppercase tracking-tight text-white leading-tight">
+                    <h2 className="font-montserrat text-lg font-semibold text-white leading-tight">
                       {product.name}
                     </h2>
                     <p className="font-sans text-sm text-muted-foreground leading-relaxed">
@@ -129,7 +126,7 @@ export default function SociPage() {
                     </p>
                     <div className="space-y-2 pt-2 border-t border-white/5">
                       {product.details.map((detail) => (
-                        <p key={detail} className="font-montserrat text-[10px] uppercase tracking-widest text-muted-foreground">
+                        <p key={detail} className="font-montserrat text-[10px] uppercase tracking-[0.12em] text-muted-foreground">
                           {detail}
                         </p>
                       ))}
