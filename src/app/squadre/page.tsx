@@ -78,12 +78,12 @@ export default function Squadre() {
               <span className="block">Una sola comunità, con percorsi diversi e una cultura condivisa.</span>
             </p>
           </div>
-          <div className="relative max-w-[15rem] overflow-hidden rounded-xl border border-brand-red/70 bg-brand-red p-5 shadow-[0_24px_70px_rgba(162,41,59,0.24)] sm:max-w-none sm:p-6 lg:col-span-5 lg:justify-self-end">
+          <div className="relative w-full max-w-[11rem] overflow-hidden rounded-xl border border-brand-red/70 bg-brand-red p-5 shadow-[0_24px_70px_rgba(162,41,59,0.24)] sm:max-w-[12rem] md:max-w-[13rem] lg:col-span-5 lg:justify-self-end">
             <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/45 to-transparent" />
-            <span className="block font-bebas text-5xl italic leading-none tracking-tight text-white sm:text-6xl md:text-7xl">
+            <span className="block font-bebas text-5xl italic leading-none tracking-tight text-white md:text-6xl">
               300+
             </span>
-            <span className="mt-1 block font-bebas text-3xl italic leading-none tracking-tight text-white/92 sm:text-4xl md:text-5xl">
+            <span className="mt-1 block font-bebas text-3xl italic leading-none tracking-tight text-white/92 md:text-4xl">
               atleti
             </span>
           </div>

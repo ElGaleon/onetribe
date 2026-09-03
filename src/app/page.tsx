@@ -88,7 +88,7 @@ const HeroVideoBackdrop = () => {
             preload="metadata"
             onTimeUpdate={(event) => handleVideoTimeUpdate(event, activeReel.id)}
             onEnded={() => playNextReel(activeReel.id)}
-            className="absolute inset-0 h-full w-full object-cover grayscale contrast-[1.22] brightness-[0.72] saturate-0"
+            className="absolute inset-0 h-full w-full object-cover"
             initial={prefersReducedMotion ? false : { scale: 1.018 }}
             animate={{ scale: 1 }}
             transition={{ duration: prefersReducedMotion ? 0.2 : 1.6, ease: [0.16, 1, 0.3, 1] }}
@@ -97,10 +97,8 @@ const HeroVideoBackdrop = () => {
           </motion.video>
         </motion.div>
       </AnimatePresence>
-      <div className="absolute inset-0 bg-[#10265D]/75 mix-blend-color" />
-      <div className="absolute inset-0 bg-[#11172C]/28 mix-blend-multiply" />
-      <div className="absolute inset-0 bg-[linear-gradient(115deg,rgba(13,30,72,0.42),transparent_44%,rgba(13,30,72,0.44))]" />
-      <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-brand-navy to-transparent" />
+      <div className="absolute inset-0 bg-[#071126]/58 mix-blend-multiply" />
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,17,38,0.44),rgba(7,17,38,0.22)_42%,rgba(7,17,38,0.58))]" />
     </div>
   )
 }
