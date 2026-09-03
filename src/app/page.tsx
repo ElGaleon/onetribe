@@ -268,15 +268,6 @@ export default function Home() {
         </motion.div>
       </section>
 
-      <div className="w-full bg-[#151C34] py-4 border-y border-white/[0.07] select-none">
-        <div className="max-w-7xl mx-auto px-4 md:px-8 grid grid-cols-2 md:grid-cols-4 gap-4 font-montserrat text-[11px] font-semibold uppercase tracking-[0.14em] text-white/[0.72]">
-          <span>Libertà</span>
-          <span>Lealtà</span>
-          <span>Inclusione</span>
-          <span>Spirit of the Game</span>
-        </div>
-      </div>
-
       <section id="progetto" className="relative py-28 px-4 md:px-8 bg-brand-navy overflow-hidden border-b border-white/5">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10 mb-14">
 
