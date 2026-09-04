@@ -70,6 +70,7 @@ export interface Navbar01Props extends React.HTMLAttributes<HTMLElement> {
 const defaultNavigationLinks: Navbar01NavLink[] = [
   { href: '/', label: 'Home', active: true },
   { href: '/squadre', label: 'Squadre' },
+  { href: '/ultimate', label: 'Ultimate' },
   { href: '/scuole', label: 'Scuole' },
   { href: '/news', label: 'News' },
   { href: '/contatti', label: 'Contatti' },
@@ -182,23 +183,23 @@ export const Navbar01 = React.forwardRef<HTMLElement, Navbar01Props>(
       <header
         ref={combinedRef}
         className={cn(
-          'fixed left-0 right-0 top-0 z-50 w-full px-3 pt-3 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] md:px-6 md:pt-4 [&_*]:no-underline',
+          'fixed left-0 right-0 top-0 z-50 w-full px-2 pt-3 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] md:px-4 md:pt-4 [&_*]:no-underline',
           className
         )}
         {...props}
       >
         <div className={cn(
-          "relative mx-auto flex w-full max-w-6xl items-center justify-between gap-3 rounded-xl border px-3 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] md:px-4",
+          "relative mx-auto flex w-full max-w-6xl items-center justify-between gap-3 rounded-xl border py-0 pl-2 pr-3 transition-all duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] md:pl-2 md:pr-4",
           isScrolled
             ? "h-14 border-white/[0.12] bg-[#151b31]/[0.72] shadow-[0_18px_70px_rgba(8,12,28,0.30)] backdrop-blur-xl supports-[backdrop-filter]:bg-[#151b31]/[0.62]"
             : "h-16 border-white/[0.08] bg-[#11172c]/[0.16] shadow-none backdrop-blur-[2px]"
         )}>
-          <div className="flex min-w-0 items-center gap-3 md:gap-5">
+          <div className="flex min-w-0 items-center gap-2 md:gap-4">
             <Link 
               href={logoHref}
               className="flex shrink-0 items-center space-x-2 rounded-lg text-primary hover:text-primary/90 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue/80"
             >
-              <div className="[&_svg]:h-9">
+              <div className="[&_svg]:!h-12 [&_svg]:!w-auto [&_svg]:!py-0">
                 {logo}
               </div>
             </Link>

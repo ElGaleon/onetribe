@@ -6,16 +6,17 @@ import Image from "next/image"
 import { ArrowLeft, ArrowRight, Clock, MapPin, Star, Trophy, User, Users } from "lucide-react"
 
 import { Navbar01 } from "@/components/ui/shadcn-io/navbar-01"
+import { SiteFooter } from "@/components/site-footer"
 import OneTribeLogo from "@/app/svg/one-tribe-logo"
 import { getPlayerPhoto, getTeamPhoto, type TeamData } from "../teams-data"
 
 const navLinks = [
   { href: "/squadre", label: "Squadre", active: true },
+  { href: "/ultimate", label: "Ultimate" },
   { href: "/scuole", label: "Scuole" },
   { href: "/news", label: "News" },
   { href: "/contatti", label: "Contatti" },
   { href: "/soci", label: "Soci" },
-  { href: "/summer-camp", label: "Summer Camp" },
 ]
 
 const PlayerPhoto = ({ name }: { name: string }) => {
@@ -83,7 +84,7 @@ export function TeamDetailClient({ team }: { team: TeamData }) {
   const hasRoster = team.roster.length > 0
 
   return (
-    <div className="min-h-screen bg-brand-navy text-foreground font-sans overflow-x-hidden relative">
+    <div className="min-h-screen bg-brand-navy bg-logo-pattern text-foreground font-sans overflow-x-hidden relative">
       <Navbar01
         logo={<OneTribeLogo className="py-2 h-10 cursor-pointer" onClick={() => window.location.href = "/"} />}
         navigationLinks={navLinks}
@@ -166,7 +167,7 @@ export function TeamDetailClient({ team }: { team: TeamData }) {
                   <Clock className="mt-0.5 h-5 w-5 shrink-0 text-brand-blue" />
                   <div>
                     <span className="block font-semibold text-white">Orari</span>
-                    <span className="text-xs text-muted-foreground">{team.schedule}</span>
+                    <ScheduleList schedule={team.schedule} />
                   </div>
                 </div>
               </div>
@@ -236,6 +237,7 @@ export function TeamDetailClient({ team }: { team: TeamData }) {
         </section>
 
       </main>
+      <SiteFooter />
     </div>
   )
 }
@@ -267,4 +269,22 @@ const List = ({ items, accent }: { items: string[]; accent: "blue" | "red" }) =>
       </li>
     ))}
   </ul>
+)
+
+const ScheduleList = ({ schedule }: { schedule: Record<string, string> }) => (
+  <dl className="mt-2 grid gap-2">
+    {Object.entries(schedule).map(([day, time]) => (
+      <div
+        key={day}
+        className="flex items-center justify-between gap-4 rounded-sm border border-white/[0.08] bg-white/[0.025] px-3 py-2"
+      >
+        <dt className="font-montserrat text-[10px] font-semibold uppercase tracking-[0.12em] text-brand-blue">
+          {day}
+        </dt>
+        <dd className="text-right text-xs font-semibold text-white/90">
+          {time}
+        </dd>
+      </div>
+    ))}
+  </dl>
 )

@@ -6,6 +6,7 @@ import Link from "next/link"
 import Image from "next/image"
 
 import { Navbar01 } from "@/components/ui/shadcn-io/navbar-01"
+import { SiteFooter } from "@/components/site-footer"
 import OneTribeLogo from "@/app/svg/one-tribe-logo"
 
 const memberProducts = [
@@ -46,11 +47,11 @@ const memberProducts = [
 export default function SociPage() {
   const navLinks = [
     { href: "/squadre", label: "Squadre" },
+    { href: "/ultimate", label: "Ultimate" },
     { href: "/scuole", label: "Scuole" },
     { href: "/news", label: "News" },
     { href: "/contatti", label: "Contatti" },
     { href: "/soci", label: "Soci", active: true },
-    { href: "/summer-camp", label: "Summer Camp" },
   ]
 
   return (
@@ -65,8 +66,8 @@ export default function SociPage() {
       />
 
       <main>
-        <section className="relative px-4 md:px-8 pb-20 pt-32 md:pt-36 bg-[#18203A] border-b border-white/[0.08] overflow-hidden">
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_78%_20%,rgba(141,179,229,0.13),transparent_52%)] pointer-events-none" />
+        <section className="relative overflow-hidden border-b border-white/[0.08] bg-[#18203A] bg-logo-pattern px-4 pb-20 pt-32 md:px-8 md:pt-36">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_78%_18%,rgba(141,179,229,0.13),transparent_48%),linear-gradient(180deg,rgba(17,23,44,0.12),rgba(17,23,44,0.72))] pointer-events-none" />
           <div className="max-w-7xl mx-auto relative z-10">
             <Link href="/" className="inline-flex items-center gap-2 text-xs font-montserrat font-bold uppercase tracking-widest text-brand-blue hover:text-white duration-200 mb-10">
               <ArrowLeft className="w-4 h-4" />
@@ -138,6 +139,7 @@ export default function SociPage() {
           </div>
         </section>
       </main>
+      <SiteFooter />
     </div>
   )
 }

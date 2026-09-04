@@ -6,16 +6,17 @@ import Image from "next/image"
 import { ArrowRight, Trophy, Users } from "lucide-react"
 
 import { Navbar01 } from "@/components/ui/shadcn-io/navbar-01"
+import { SiteFooter } from "@/components/site-footer"
 import OneTribeLogo from "@/app/svg/one-tribe-logo"
 import { getTeamPhoto, orderedTeams, type TeamData } from "./teams-data"
 
 const navLinks = [
   { href: "/squadre", label: "Squadre", active: true },
+  { href: "/ultimate", label: "Ultimate" },
   { href: "/scuole", label: "Scuole" },
   { href: "/news", label: "News" },
   { href: "/contatti", label: "Contatti" },
   { href: "/soci", label: "Soci" },
-  { href: "/summer-camp", label: "Summer Camp" },
 ]
 
 const TeamCardImage = ({ team }: { team: TeamData }) => {
@@ -57,8 +58,7 @@ export default function Squadre() {
         onCtaClick={() => window.location.href = "/contatti"}
       />
 
-      <section className="relative overflow-hidden border-b border-white/[0.08] bg-[#18203A] px-4 pb-20 pt-32 md:px-8 md:pt-36">
-        <div className="absolute inset-0 bg-logo-pattern opacity-[0.16]" />
+      <section className="relative overflow-hidden border-b border-white/[0.08] bg-[#18203A] bg-logo-pattern px-4 pb-20 pt-32 md:px-8 md:pt-36">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_78%_18%,rgba(141,179,229,0.16),transparent_48%),linear-gradient(180deg,rgba(17,23,44,0.18),rgba(17,23,44,0.68))] pointer-events-none" />
         <div className="relative z-10 mx-auto grid max-w-7xl grid-cols-1 gap-10 lg:grid-cols-12 lg:items-end">
           <div className="space-y-5 lg:col-span-7">
@@ -131,6 +131,7 @@ export default function Squadre() {
           </div>
         </section>
       </main>
+      <SiteFooter />
     </div>
   )
 }

@@ -13,7 +13,7 @@ export interface TeamData {
   desc: string
   image: string
   location: string
-  schedule: string
+  schedule: Record<string, string>
   coaches: string[]
   captains: string[]
   roster: PlayerData[]
@@ -41,8 +41,8 @@ export const teams: Record<string, TeamData> = {
     category: "Divisione maschile",
     desc: "La prima squadra maschile rappresenta il livello competitivo senior del club: intensità, disciplina e responsabilità condivisa in campo.",
     image: exampleImages[5].url,
-    location: "Centro Sportivo Barca, Via Raffaello Sanzio, Bologna",
-    schedule: "Orari in aggiornamento",
+    location: "Centro Sportivo Anzola, Via Lunga, 29, 40011 Anzola dell'Emilia BO",
+    schedule: { "Lunedì": "20.30-22.30", "Martedì": "20.30-22.30", "Giovedì": "20.30-22.30" },
     coaches: ["Staff tecnico in aggiornamento"],
     captains: ["Galeone Christian", "Di Grazia Pablo", "Baraldi Federico"],
     roster: [
@@ -79,7 +79,7 @@ export const teams: Record<string, TeamData> = {
     desc: "La prima squadra femminile porta in campo identità, qualità tecnica e continuità competitiva per il movimento One Tribe.",
     image: exampleImages[6].url,
     location: "Centro Sportivo Barca, Via Raffaello Sanzio, Bologna",
-    schedule: "Orari in aggiornamento",
+    schedule: { "In aggiornamento": "Orari da confermare" },
     coaches: ["Staff tecnico in aggiornamento"],
     captains: [],
     roster: [],
@@ -93,7 +93,7 @@ export const teams: Record<string, TeamData> = {
     desc: "La divisione mista esprime una parte centrale dell'Ultimate: collaborazione, equilibrio e letture condivise tra atleti e atlete.",
     image: exampleImages[7].url,
     location: "Centro Sportivo Barca, Via Raffaello Sanzio, Bologna",
-    schedule: "Orari in aggiornamento",
+    schedule: { "In aggiornamento": "Orari da confermare" },
     coaches: ["Staff tecnico in aggiornamento"],
     captains: [],
     roster: [],
@@ -107,7 +107,7 @@ export const teams: Record<string, TeamData> = {
     desc: "Esperienza, lettura del gioco e cultura sportiva: la divisione Master raccoglie il lato più maturo della community One Tribe.",
     image: exampleImages[4].url,
     location: "Centro Sportivo Barca, Via Raffaello Sanzio, Bologna",
-    schedule: "Orari in aggiornamento",
+    schedule: { "In aggiornamento": "Orari da confermare" },
     coaches: ["Staff tecnico in aggiornamento"],
     captains: [],
     roster: [],
@@ -121,7 +121,7 @@ export const teams: Record<string, TeamData> = {
     desc: "Il ponte verso le prime squadre: intensità, autonomia tattica e continuità competitiva per chi cresce nel club.",
     image: exampleImages[2].url,
     location: "Centro Sportivo Barca, Via Raffaello Sanzio, Bologna",
-    schedule: "Orari in aggiornamento",
+    schedule: { "In aggiornamento": "Orari da confermare" },
     coaches: ["Staff tecnico in aggiornamento"],
     captains: [],
     roster: [],
@@ -135,7 +135,7 @@ export const teams: Record<string, TeamData> = {
     desc: "La fascia in cui il gioco diventa più strutturato: letture di campo, atletismo e responsabilità personale dentro la squadra.",
     image: exampleImages[1].url,
     location: "Centro Sportivo Barca, Via Raffaello Sanzio, Bologna",
-    schedule: "Orari in aggiornamento",
+    schedule: { "In aggiornamento": "Orari da confermare" },
     coaches: ["Staff tecnico in aggiornamento"],
     captains: [],
     roster: [],
@@ -149,7 +149,7 @@ export const teams: Record<string, TeamData> = {
     desc: "Il primo ingresso nel percorso One Tribe: tecnica di base, gioco, coordinazione e Spirit of the Game costruiti con gradualità.",
     image: exampleImages[0].url,
     location: "Centro Sportivo Barca, Via Raffaello Sanzio, Bologna",
-    schedule: "Orari in aggiornamento",
+    schedule: { "In aggiornamento": "Orari da confermare" },
     coaches: ["Staff tecnico in aggiornamento"],
     captains: [],
     roster: [],

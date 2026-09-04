@@ -5,22 +5,18 @@ import { useRouter } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
 import { AnimatePresence, motion, useReducedMotion } from "motion/react"
-import { 
-  ArrowRight, 
-  Trophy, 
-  Shield, 
-  Mail, 
-  MapPin, 
-  Heart, 
-  FileText
+import {
+  ArrowRight,
+  Shield,
 } from "lucide-react"
 
 import { Navbar01 } from "@/components/ui/shadcn-io/navbar-01"
+import { SiteFooter } from "@/components/site-footer"
 import OneTribeLogo from "@/app/svg/one-tribe-logo"
 import OneTribeText from "@/app/svg/one-tribe-text"
 import Floating, { FloatingElement } from "@/components/fancy/image/parallax-floating"
 import { exampleImages } from "@/utils/demo-images"
-import { defaultArticles, type Article } from "./news/articles-data"
+import { defaultArticles, mergeStoredArticles, type Article } from "./news/articles-data"
 
 const heroReels = [
   { id: 1, videoSrc: "/videos/hero-reel-h264.mp4" },
@@ -122,21 +118,24 @@ export default function Home() {
     let loadedArticles = defaultArticles
     if (saved) {
       try {
-        loadedArticles = JSON.parse(saved)
+        loadedArticles = mergeStoredArticles(JSON.parse(saved))
+        localStorage.setItem("one_tribe_news", JSON.stringify(loadedArticles))
       } catch (e) {
         console.error(e)
       }
+    } else {
+      localStorage.setItem("one_tribe_news", JSON.stringify(defaultArticles))
     }
     setArticles(loadedArticles)
   }, [])
 
   const navLinks = [
     { href: "/squadre", label: "Squadre" },
+    { href: "/ultimate", label: "Ultimate" },
     { href: "/scuole", label: "Scuole" },
     { href: "/news", label: "News" },
     { href: "/contatti", label: "Contatti" },
     { href: "/soci", label: "Soci" },
-    { href: "/summer-camp", label: "Summer Camp" },
   ]
 
   const sponsors = [
@@ -167,46 +166,22 @@ export default function Home() {
             exit={{ opacity: 0, y: -24 }}
             transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
           >
-            <div className="absolute inset-0 bg-logo-pattern opacity-[0.16]" />
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_42%,rgba(141,179,229,0.16),transparent_58%)]" />
+            <div className="absolute inset-0 bg-logo-pattern opacity-[0.12]" />
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_42%,rgba(141,179,229,0.12),transparent_58%)]" />
             <div className="relative z-10 flex w-full max-w-5xl flex-col items-center px-6 text-center">
               <motion.div
-                initial={prefersReducedMotion ? false : { opacity: 0, y: 18 }}
+                initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.94 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                className="mb-7"
-              >
-                <OneTribeLogo className="h-24 w-auto drop-shadow-[0_22px_50px_rgba(8,12,28,0.45)] md:h-32" />
-              </motion.div>
-
-              <div className="grid w-full grid-cols-1 gap-2 sm:grid-cols-3 sm:gap-4">
-                {["Libertà", "Lealtà", "Inclusione"].map((value, index) => (
-                  <motion.div
-                    key={value}
-                    initial={prefersReducedMotion ? false : { opacity: 0, y: 28 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.18 + index * 0.14, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-                    className="border-y border-white/[0.12] py-4"
-                  >
-                    <span className="font-bebas text-5xl uppercase italic leading-none tracking-tight text-white md:text-7xl">
-                      {value}
-                    </span>
-                  </motion.div>
-                ))}
-              </div>
-
-              <motion.div
-                className="mt-8 h-px w-full max-w-xl overflow-hidden bg-white/[0.12]"
-                initial={prefersReducedMotion ? false : { opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.55, duration: 0.35 }}
+                transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+                className="relative flex items-center justify-center"
               >
                 <motion.div
-                  className="h-full bg-brand-red"
-                  initial={{ x: "-100%" }}
-                  animate={{ x: "0%" }}
-                  transition={{ duration: prefersReducedMotion ? 0.25 : 1.05, delay: 0.62, ease: [0.16, 1, 0.3, 1] }}
-                />
+                  animate={prefersReducedMotion ? undefined : { scale: [1, 1.08, 1], opacity: [0.86, 1, 0.86] }}
+                  transition={{ duration: 1.25, repeat: Infinity, ease: [0.16, 1, 0.3, 1] }}
+                  className="flex h-full w-full items-center justify-center"
+                >
+                  <OneTribeLogo className="h-24 w-auto drop-shadow-[0_18px_45px_rgba(8,12,28,0.42)] md:h-32" />
+                </motion.div>
               </motion.div>
             </div>
           </motion.div>
@@ -240,11 +215,14 @@ export default function Home() {
               </div>
             </div>
 
-            <p
-              className="mt-6 max-w-xl text-center font-montserrat text-sm leading-relaxed text-[#E3E8F4] md:text-base"
-            >
-              Squadre, corsi e una comunità costruita su libertà, lealtà e inclusione.
-            </p>
+            <div className="mt-7 w-[300px] max-w-[92vw] text-center sm:w-[520px] md:w-[720px]">
+              <p className="font-bebas text-3xl uppercase italic leading-[1.08] text-white drop-shadow-[0_16px_34px_rgba(8,12,28,0.42)] sm:text-4xl md:text-5xl">
+                Libertà. Lealtà. Inclusione.
+              </p>
+              <p className="mx-auto mt-3 max-w-2xl font-montserrat text-sm font-medium leading-relaxed text-[#E3E8F4] drop-shadow-[0_12px_28px_rgba(8,12,28,0.36)] md:text-base">
+                Molto più di uno sport. Una tribù in cui crescere, competere e vivere esperienze insieme.
+              </p>
+            </div>
 
             <div className="z-20 mt-8 flex flex-col gap-3 sm:flex-row">
               <button
@@ -281,10 +259,10 @@ export default function Home() {
 
           <div className="lg:col-span-7 space-y-6 text-muted-foreground font-sans text-base md:text-lg leading-relaxed">
             <p>
-              L’Ultimate Frisbee è uno sport in grandissima crescita che sta vivendo il passaggio da sport di nicchia, amatoriale, dove la passione ed il coinvolgimento personale sono decisivi, ad attività strutturata che necessita di un approccio più professionale, sia dal punto di vista organizzativo che da quello tecnico.
+              One Tribe nasce dalla volontà di costruire un luogo in cui vivere lo sport in tutte le sue forme: dalla prima esperienza con un disco alla competizione, dalla scuola alla prima squadra.
             </p>
             <p className="border-l-4 border-brand-blue pl-4 text-white font-medium">
-              L’obiettivo del progetto ONE TRIBE è di creare una realtà strutturata e professionale, capace di far avvicinare a questo sport un numero sempre maggiore di ragazze e ragazzi, garantendo la continuità e la sostenibilità nel tempo dei suoi valori fondanti:
+              Un percorso fatto di allenamenti, persone, viaggi, sfide ed esperienze, nel quale ogni atleta possa trovare il proprio spazio, crescere e scoprire fin dove può arrivare.
             </p>
           </div>
 
@@ -392,8 +370,8 @@ export default function Home() {
         </section>
       )}
 
-      {/* History Sections */}
-      <section id="storia" className="relative py-28 px-4 md:px-8 bg-brand-navy bg-dots-pattern overflow-hidden border-y border-white/5">
+      {/* Club History */}
+      <section id="storia" className="relative py-28 px-4 md:px-8 bg-brand-navy bg-logo-pattern overflow-hidden border-y border-white/5">
         <div className="absolute top-10 left-10 font-bebas text-[20vw] text-outline-blue opacity-[0.03] tracking-tighter uppercase italic select-none pointer-events-none transform -skew-x-12">
           EST. 2009
         </div>
@@ -401,7 +379,7 @@ export default function Home() {
           ULTIMATE
         </div>
 
-        <div className="max-w-7xl mx-auto space-y-24 relative z-10">
+        <div className="max-w-7xl mx-auto relative z-10">
           
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             <div className="lg:col-span-5 space-y-4">
@@ -425,66 +403,6 @@ export default function Home() {
             </div>
           </div>
 
-          <hr className="border-white/5" />
-
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            <div className="lg:col-span-5 space-y-4">
-              <span className="font-bebas text-brand-blue text-xl tracking-wide uppercase italic">Cenni sullo sport</span>
-              <h3 className="font-bebas text-5xl md:text-7xl uppercase italic tracking-tighter text-white transform -skew-x-12 leading-none mt-2">
-                STORIA DEL<br/><span className="text-brand-red">DISCO</span>
-              </h3>
-              <div className="w-16 h-1 bg-brand-red mt-4 transform -skew-x-12" />
-            </div>
-
-            <div className="lg:col-span-7 space-y-6 text-muted-foreground font-sans text-base md:text-lg leading-relaxed">
-              <p>
-                Nato alla fine degli anni Sessanta negli Stati Uniti, l&apos;Ultimate Frisbee approda in Italia circa un decennio più tardi, prima a Milano, a Rimini e poi a Bologna. Nel 1979 viene fondata la Federazione Italiana Flying Disc e nel 2015 lo sport viene ufficialmente riconosciuto dal CIO (Comitato Olimpico Internazionale).
-              </p>
-              <p>
-                Tuttavia è solo negli ultimi anni che l&apos;Ultimate si espande in tutta Italia: attualmente sono 35 le società associate alla Federazione e proprio a Bologna si trova la più alta concentrazione di giocatori di tutta Europa.
-              </p>
-              <p className="text-white font-medium">
-                Un primato che è frutto di una stretta collaborazione tra le società che promuovono questo sport e gli Istituti Scolastici del territorio.
-              </p>
-            </div>
-          </div>
-
-        </div>
-      </section>
-
-      <section className="relative overflow-hidden border-y border-white/[0.08] bg-[#192039] px-4 py-24 md:px-8">
-        <div className="mx-auto grid max-w-7xl grid-cols-1 gap-10 lg:grid-cols-12 lg:items-end">
-          <div className="lg:col-span-5">
-            <div className="mb-5 flex h-10 w-10 items-center justify-center rounded-sm border border-white/10 bg-white/[0.04] text-brand-blue">
-              <Trophy className="h-5 w-5" />
-            </div>
-            <h2 className="font-bebas text-5xl uppercase italic leading-none tracking-tighter text-white md:text-7xl">
-              Una società,<br />
-              <span className="text-brand-blue">più percorsi.</span>
-            </h2>
-          </div>
-
-          <div className="space-y-5 lg:col-span-7">
-            <p className="max-w-2xl text-base leading-relaxed text-muted-foreground md:text-lg">
-              Agonismo, corsi giovani, attività nelle scuole e community: One Tribe tiene insieme crescita sportiva e cultura del fair play.
-            </p>
-            <div className="grid grid-cols-1 gap-px overflow-hidden rounded-sm border border-white/[0.08] bg-white/[0.08] sm:grid-cols-3">
-              {[
-                ["200+", "Atleti associati"],
-                ["2009", "Inizio del percorso"],
-                ["1ª", "Società d'Italia"]
-              ].map(([value, label]) => (
-                <div key={label} className="bg-[#151C34] p-5">
-                  <span className="block font-bebas text-5xl italic leading-none tracking-tight text-white md:text-6xl">
-                    {value}
-                  </span>
-                  <span className="mt-3 block font-montserrat text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-                    {label}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
         </div>
       </section>
 
@@ -601,69 +519,7 @@ export default function Home() {
         </div>
       </section>
 
-      <footer className="bg-brand-navy border-t border-white/5 py-16 px-4 select-none">
-        <div className="max-w-7xl mx-auto space-y-12">
-          
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
-            
-            <div className="md:col-span-5 space-y-4">
-              <div className="flex items-center gap-4">
-                <OneTribeLogo className="w-14 h-14" />
-                <div>
-                  <h4 className="font-bebas text-3xl text-white tracking-tighter uppercase italic leading-none">
-                    ONE TRIBE
-                  </h4>
-                  <p className="font-sans text-[10px] text-muted-foreground uppercase tracking-widest mt-1">
-                    Bologna Ultimate Frisbee
-                  </p>
-                </div>
-              </div>
-              <p className="font-sans text-xs text-muted-foreground leading-relaxed max-w-sm">
-                La prima società sportiva di Ultimate Frisbee in Italia per numero di tesserati. Valorizziamo lo sport come strumento di crescita, divertimento e fair play.
-              </p>
-            </div>
-
-            <div className="md:col-span-4 space-y-3 font-sans text-xs text-muted-foreground">
-              <h5 className="font-montserrat font-bold text-white uppercase tracking-wider text-xs">BUG ASD</h5>
-              <p className="flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-brand-blue" />
-                Via Rumpianesi n. 77 Anzola dell’Emilia (BO) 40011
-              </p>
-              <p className="flex items-center gap-2">
-                <FileText className="w-4 h-4 text-brand-red" />
-                CF / P.IVA 04140151202
-              </p>
-              <p className="flex items-center gap-2">
-                <Mail className="w-4 h-4 text-brand-blue" />
-                PEC: <a href="mailto:bug.asd@pec.it" className="hover:text-white underline">bug.asd@pec.it</a>
-              </p>
-            </div>
-
-            <div className="md:col-span-3 space-y-3 font-montserrat text-xs text-muted-foreground uppercase tracking-wider">
-              <h5 className="font-montserrat font-bold text-white uppercase tracking-wider text-xs">Documenti</h5>
-              <p><a href="/privacy-policy" target="_blank" className="hover:text-brand-blue duration-200">Privacy & Cookie Policy</a></p>
-              <p><a href="/gestione-cookie" target="_blank" className="hover:text-brand-blue duration-200">Gestione Cookie</a></p>
-              <p><a href="/summer-camp" className="hover:text-brand-blue duration-200">Summer Camp info</a></p>
-            </div>
-
-          </div>
-
-          <hr className="border-white/5" />
-
-          <div className="flex flex-col sm:flex-row justify-between items-center gap-4 text-center sm:text-left font-sans text-[10px] text-muted-foreground">
-            <div>
-              <p>Copyright &copy; {new Date().getFullYear()} BUG ASD. Tutti i diritti riservati.</p>
-              <p className="mt-0.5">Associazione Sportiva Dilettantistica affiliata alla FIFD.</p>
-            </div>
-            <div className="flex items-center gap-1">
-              <span>Made with</span>
-              <Heart className="w-3 h-3 text-brand-red fill-brand-red" />
-              <span>& Spirit of the Game.</span>
-            </div>
-          </div>
-
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   )
 }

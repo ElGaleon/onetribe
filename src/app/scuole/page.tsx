@@ -1,7 +1,6 @@
 "use client"
 
 import React, { useState } from "react"
-import Link from "next/link"
 import { motion } from "motion/react"
 import { 
   BookOpen, 
@@ -15,6 +14,7 @@ import {
 } from "lucide-react"
 
 import { Navbar01 } from "@/components/ui/shadcn-io/navbar-01"
+import { SiteFooter } from "@/components/site-footer"
 import OneTribeLogo from "@/app/svg/one-tribe-logo"
 
 export default function Scuole() {
@@ -29,11 +29,11 @@ export default function Scuole() {
 
   const navLinks = [
     { href: "/squadre", label: "Squadre" },
+    { href: "/ultimate", label: "Ultimate" },
     { href: "/scuole", label: "Scuole", active: true },
     { href: "/news", label: "News" },
     { href: "/contatti", label: "Contatti" },
     { href: "/soci", label: "Soci" },
-    { href: "/summer-camp", label: "Summer Camp" },
   ]
 
   const collaboratingSchools = [
@@ -77,19 +77,21 @@ export default function Scuole() {
         onCtaClick={() => window.location.href = "/contatti"}
       />
 
-      <section className="relative px-4 pb-20 pt-32 md:px-8 md:pt-36 overflow-hidden bg-[#18203A] border-b border-white/[0.08]">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_18%,rgba(141,179,229,0.13),transparent_50%)] pointer-events-none" />
-        <div className="max-w-4xl mx-auto text-center space-y-5 relative z-10">
-          <div className="flex items-center justify-center gap-2 px-3 py-1 rounded-sm bg-white/[0.045] border border-white/10 text-brand-blue text-xs font-semibold uppercase tracking-[0.14em] font-montserrat w-max mx-auto">
+      <section className="relative overflow-hidden border-b border-white/[0.08] bg-[#18203A] bg-logo-pattern px-4 pb-20 pt-32 md:px-8 md:pt-36">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_78%_18%,rgba(141,179,229,0.13),transparent_48%),linear-gradient(180deg,rgba(17,23,44,0.12),rgba(17,23,44,0.72))] pointer-events-none" />
+        <div className="relative z-10 mx-auto max-w-7xl">
+          <div className="max-w-3xl space-y-5">
+          <div className="flex w-max items-center gap-2 rounded-sm border border-white/10 bg-white/[0.045] px-3 py-1 font-montserrat text-xs font-semibold uppercase tracking-[0.14em] text-brand-blue">
             <GraduationCap className="w-4 h-4" />
             Ultimate nelle scuole
           </div>
           <h1 className="font-bebas text-6xl md:text-8xl text-white uppercase italic tracking-tighter transform -skew-x-12 leading-none">
             Progetto <span className="text-brand-red">scuole</span>
           </h1>
-          <p className="font-sans text-base md:text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto">
+          <p className="max-w-2xl font-sans text-base leading-relaxed text-muted-foreground md:text-lg">
             Portiamo l&apos;Ultimate Frisbee negli istituti di Bologna con moduli didattici, tornei e una cultura del fair play concreta.
           </p>
+          </div>
         </div>
       </section>
 
@@ -163,7 +165,7 @@ export default function Scuole() {
       </section>
 
       {/* Collaborating Schools & Tournaments */}
-      <section className="relative py-20 bg-[#1E2543] bg-grid-pattern border-y border-white/5 px-4 md:px-8">
+      <section className="relative py-20 bg-[#1E2543] bg-logo-pattern border-y border-white/5 px-4 md:px-8">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 relative z-10">
           
           {/* Schools list */}
@@ -321,29 +323,7 @@ export default function Scuole() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-[#1E2543] border-t border-white/5 py-12 px-4 select-none">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6 text-center md:text-left">
-          <div>
-            <h4 className="font-bebas text-2xl text-white tracking-tighter uppercase italic leading-none">
-              ONE TRIBE
-            </h4>
-            <p className="font-sans text-[10px] text-muted-foreground uppercase tracking-widest mt-1">
-              Bologna Ultimate Frisbee / BUG ASD
-            </p>
-          </div>
-          <div className="flex gap-6 font-montserrat text-xs text-muted-foreground uppercase tracking-wider">
-            <Link href="/" className="hover:text-brand-blue duration-200">Home</Link>
-            <Link href="/squadre" className="hover:text-brand-blue duration-200">Squadre</Link>
-            <Link href="/scuole" className="hover:text-brand-blue duration-200">Scuole</Link>
-            <Link href="/news" className="hover:text-brand-blue duration-200">News</Link>
-            <Link href="/contatti" className="hover:text-brand-blue duration-200">Contatti</Link>
-          </div>
-          <div className="font-sans text-[10px] text-muted-foreground">
-            <p>&copy; {new Date().getFullYear()} BUG ASD. Tutti i diritti riservati.</p>
-          </div>
-        </div>
-      </footer>
+      <SiteFooter />
 
     </div>
   )

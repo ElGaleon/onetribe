@@ -12,7 +12,7 @@ export default function TextAlongPathDemo() {
                 svgClassName="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 py-2 sm:py-8"
                 viewBox="-20 10 240 180"
                 text="FREEDOM | LOYALTY | INCLUSION"
-                textClassName="text-[10.6px] uppercase font-azeret-mono text-blue-400 z-index-1"
+                textClassName="text-[10.6px] uppercase font-montserrat text-blue-400 z-index-1"
                 duration={20}
                 preserveAspectRatio="none"
                 textAnchor="start"
